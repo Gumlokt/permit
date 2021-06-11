@@ -1,0 +1,10 @@
+*,
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* background: whitesmoke; */
+    font-family: Roboto, Arial, sans-serif;
+    font-weight: 400;
+}
