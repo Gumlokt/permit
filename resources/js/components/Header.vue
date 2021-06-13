@@ -5,18 +5,18 @@
 
       <ul class="menu__items">
         <li class="menu__item">
-          <a href="#" class="menu__link menu__link_active">Главная</a>
+          <a href="#" class="menu__link menu__link_active"><span class="material-icons-outlined md-18">home</span> Главная</a>
         </li>
         <li class="menu__item">
-          <a href="#" class="menu__link">Поиск</a>
+          <a href="#" class="menu__link"><span class="material-icons-outlined md-18">search</span>Поиск</a>
         </li>
         <li class="menu__item">
-          <a href="#" class="menu__link">Статистика</a>
+          <a href="#" class="menu__link"><span class="material-icons-outlined md-18">bar_chart</span> Статистика</a>
         </li>
       </ul>
 
       <div class="menu__user">
-        <a href="#" class="menu__link">Настройки</a>
+        <a href="#" class="menu__link"><span class="material-icons-outlined md-18">settings</span> Настройки</a>
       </div>
     </nav>
   </header>
@@ -37,7 +37,7 @@ export default {
 <style>
 .header {
   padding: 10px 0;
-  background-image: 
+  background-image:
     linear-gradient(178deg, rgb(0, 138, 255), rgba(0, 138, 255, 0) 100%),
     linear-gradient(20deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%),
     linear-gradient(120deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%);

@@ -1,10 +1,16 @@
+@import url(./normalize.css);
+
 *,
 html,
 body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* background: whitesmoke; */
     font-family: Roboto, Arial, sans-serif;
     font-weight: 400;
 }
+
+span.md-18 { margin-right: 4px; font-size: 18px; }
+span.md-24 { margin-right: 4px; font-size: 24px; }
+span.md-36 { margin-right: 4px; font-size: 36px; }
+span.md-48 { margin-right: 4px; font-size: 48px; }
