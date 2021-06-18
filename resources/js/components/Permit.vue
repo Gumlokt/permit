@@ -58,8 +58,8 @@
       </div>
 
       <div class="card__footer">
-        <button type="reset" class="card__button card__button_reset-form" @click="resetForm"><span class="material-icons-outlined md-18">clear</span> Очистить</button>
-        <button type="submit" class="card__button card__button_save" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
+        <button type="reset" class="card__button card__button_reset-form" @click="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
+        <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
 
     </form>
@@ -68,33 +68,19 @@
 </template>
 
 <script>
+// import { mapState, mapMutations } from "vuex";
+
 export default {
   data() {
     return {
-      permit: {
-        number: null,
-        surname: null,
-        forename: null,
-        patronymic: null,
-        company: null,
-        position: null,
-        dateStart: null,
-        dateEnd: null,
-      },
-      focuses: {
-        number: false,
-        surname: false,
-        forename: false,
-        patronymic: false,
-        company: false,
-        position: false,
-        dateStart: false,
-        dateEnd: false,
-      }
+      permit: { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, },
+      focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
     }
   },
 
   methods: {
+    // ...mapMutations(['increment']),
+
     clearInput(inputField) {
       this.permit[inputField] = null;
       this.focusInput(inputField);
@@ -105,39 +91,39 @@ export default {
     },
 
     resetForm() {
-      this.permit = {
-        number: null,
-        surname: null,
-        forename: null,
-        patronymic: null,
-        company: null,
-        position: null,
-        dateStart: null,
-        dateEnd: null,
-      };
+      this.permit = { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, };
+      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
+    },
 
-    this.focuses = {
-        number: false,
-        surname: false,
-        forename: false,
-        patronymic: false,
-        company: false,
-        position: false,
-        dateStart: false,
-        dateEnd: false,
-      }
-
+    savePermit() {
+      this.resetForm();
+      console.log('saved...');
     },
   },
 
-    computed: {
-        saveButtonIsDisabled() {
-            return false;
-            // return this.permit.some((item) => {
-            //     return item == false;
-            // });
+  computed: {
+    // ...mapState(['permit']),
+
+    resetButtonIsDisabled() {
+      for (const prop in this.permit) {
+        if(this.permit[prop]) {
+          return false;
         }
-    }
+      }
+
+      return true;
+    },
+
+    saveButtonIsDisabled() {
+      for (const prop in this.permit) {
+        if(!this.permit[prop]) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+  }
 };
 </script>
 
