@@ -35,3 +35,7 @@ class CreatePeopleTable extends Migration
         Schema::dropIfExists('people');
     }
 }
+
+/** Database Seeding
+ * php artisan make:seeder PersonsTableSeeder
+ */

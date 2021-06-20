@@ -38,3 +38,7 @@ class CreatePermitsTable extends Migration
         Schema::dropIfExists('permits');
     }
 }
+
+/** Database Seeding
+ * php artisan make:seeder PermitsTableSeeder
+ */

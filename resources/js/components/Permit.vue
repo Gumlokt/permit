@@ -58,6 +58,8 @@
       </div>
 
       <div class="card__footer">
+        <button type="reset" class="card__button card__button_temporary" @click="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button>
+        <button type="reset" class="card__button card__button_temporary" @click="fillUpPermits"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
         <button type="reset" class="card__button card__button_reset-form" @click="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
         <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
@@ -96,8 +98,55 @@ export default {
     },
 
     savePermit() {
-      this.resetForm();
+      const res = fetch(`api/permits`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.permit),
+      })
+      .then((response) => {
+        console.log(response);
+
+        return response.json();
+      })
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+      // this.resetForm();
       console.log('saved...');
+    },
+
+    fillUpPermits() {
+      this.permit = { number: '123', surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '01.07.2021', dateEnd: '31.12.2021', };
+    },
+
+    getPermits() {
+      const res = fetch(`api/permits`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        console.log(res);
+        return res; // res is an array of objects, where each object contain permit data
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+      // console.log(res);
     },
   },
 
@@ -188,7 +237,7 @@ export default {
 
 .card__text-label {
   position: absolute;
-  top: 3px;
+  top: 2px;
   left: 0;
   grid-column: 1 / 3;
   grid-row: 1;
@@ -243,6 +292,14 @@ export default {
   background: transparent;
 }
 
+.card__button_temporary {
+  border: 1px solid slategray;
+}
+
+.card__button_temporary:hover {
+  background: slategray;
+}
+
 .card__button_reset-input {
   margin: 0 0 0 5px;
   padding: 0;
@@ -271,7 +328,7 @@ export default {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   display: grid;
-  grid-template-columns: repeat(2, 130px);
+  grid-template-columns: repeat(4, 130px);
   justify-content: end;
   gap: 10px;
   border-top: 1px solid lightgray;

@@ -32,3 +32,7 @@ class CreateCompaniesTable extends Migration
         Schema::dropIfExists('companies');
     }
 }
+
+/** Database Seeding
+ * php artisan make:seeder CompaniesTableSeeder
+ */
