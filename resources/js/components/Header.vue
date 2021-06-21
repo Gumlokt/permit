@@ -130,4 +130,10 @@ export default {
   color: #ff7;
   text-shadow: 0 1px 0 #555;
 }
+
+@media screen and (max-width: 1420px) {
+  .header {
+    padding: 10px;
+  }
+}
 </style>

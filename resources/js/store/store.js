@@ -4,18 +4,14 @@ export const store = createStore({
   state() {
     return {
       permits: [],
-
-      permit: {
-        number: null,
-        surname: null,
-        forename: null,
-        patronymic: null,
-        company: null,
-        position: null,
-        dateStart: null,
-        dateEnd: null,
-      },
+      latestPermitNumber: null,
     };
+  },
+
+  getters: {
+    sequencePermitNumber: state => {
+      return state.latestPermitNumber + 1;
+    }
   },
 
   mutations: {
@@ -32,7 +28,9 @@ export const store = createStore({
         })
         .then((res) => {
           state.permits = res;
-          // console.log(res);
+          state.latestPermitNumber = parseInt(state.permits[0].number);
+
+          // console.log(state.latestPermitNumber + 1);
           return res; // res is an array of objects, where each object contain permit data
         })
         .catch((err) => {

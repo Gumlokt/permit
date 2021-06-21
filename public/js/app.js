@@ -16041,7 +16041,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-// import { mapState, mapMutations } from "vuex";
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -16067,8 +16074,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  methods: {
-    // ...mapMutations(['increment']),
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(['populatePermits'])), {}, {
     clearInput: function clearInput(inputField) {
       this.permit[inputField] = null;
       this.focusInput(inputField);
@@ -16099,6 +16105,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     savePermit: function savePermit() {
+      var _this = this;
+
       var res = fetch("api/permits", {
         method: 'POST',
         headers: {
@@ -16109,12 +16117,14 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
+        _this.populatePermits();
+
         return res;
       })["catch"](function (err) {
         console.log(err);
       });
-      console.log(res); // this.resetForm();
-
+      console.log(res);
+      this.resetForm();
       console.log('saved...');
     },
     fillUpPermits: function fillUpPermits() {
@@ -16132,9 +16142,8 @@ __webpack_require__.r(__webpack_exports__);
     getPermits: function getPermits() {
       console.log(this.$store.state.permits);
     }
-  },
-  computed: {
-    // ...mapState(['permit']),
+  }),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['sequencePermitNumber'])), {}, {
     resetButtonIsDisabled: function resetButtonIsDisabled() {
       for (var prop in this.permit) {
         if (this.permit[prop]) {
@@ -16153,7 +16162,7 @@ __webpack_require__.r(__webpack_exports__);
 
       return false;
     }
-  }
+  })
 });
 
 /***/ }),
@@ -16248,98 +16257,72 @@ var _hoisted_3 = {
   "class": "log__table"
 };
 
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("tr", {
+  "class": "log__trh"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
   "class": "log__th"
-}, "№", -1
+}, "№ пропуска"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Фамилия"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Имя"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Отчество"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Компания"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Должность"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Действует с"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Действует по")], -1
 /* HOISTED */
 );
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Фамилия", -1
-/* HOISTED */
-);
-
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Имя", -1
-/* HOISTED */
-);
-
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Отчество", -1
-/* HOISTED */
-);
-
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Компания", -1
-/* HOISTED */
-);
-
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Должность", -1
-/* HOISTED */
-);
-
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Действует с", -1
-/* HOISTED */
-);
-
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
-}, "Действует по", -1
-/* HOISTED */
-);
-
+var _hoisted_5 = {
+  "class": "log__td"
+};
+var _hoisted_6 = {
+  "class": "log__td"
+};
+var _hoisted_7 = {
+  "class": "log__td"
+};
+var _hoisted_8 = {
+  "class": "log__td"
+};
+var _hoisted_9 = {
+  "class": "log__td"
+};
+var _hoisted_10 = {
+  "class": "log__td"
+};
+var _hoisted_11 = {
+  "class": "log__td"
+};
 var _hoisted_12 = {
   "class": "log__td"
 };
-var _hoisted_13 = {
-  "class": "log__td"
-};
-var _hoisted_14 = {
-  "class": "log__td"
-};
-var _hoisted_15 = {
-  "class": "log__td"
-};
-var _hoisted_16 = {
-  "class": "log__td"
-};
-var _hoisted_17 = {
-  "class": "log__td"
-};
-var _hoisted_18 = {
-  "class": "log__td"
-};
-var _hoisted_19 = {
-  "class": "log__td"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("table", _hoisted_3, [_hoisted_4, _hoisted_5, _hoisted_6, _hoisted_7, _hoisted_8, _hoisted_9, _hoisted_10, _hoisted_11, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.permits, function (permit) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("table", _hoisted_3, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.permits, function (permit) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("tr", {
       "class": "log__tr",
       key: permit.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.number), 1
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.number), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.surname), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.surname), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.forename), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.forename), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.patronymic), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.patronymic), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.name), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.name), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.position), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.position), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.start), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.start), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.end), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.end), 1
     /* TEXT */
     )]);
   }), 128
@@ -16526,7 +16509,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onBlur: _cache[3] || (_cache[3] = function ($event) {
       return $data.focuses.number = false;
     }),
-    ref: "number"
+    ref: "number",
+    disabled: ""
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.number]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
@@ -16812,17 +16796,13 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({
   state: function state() {
     return {
       permits: [],
-      permit: {
-        number: null,
-        surname: null,
-        forename: null,
-        patronymic: null,
-        company: null,
-        position: null,
-        dateStart: null,
-        dateEnd: null
-      }
+      latestPermitNumber: null
     };
+  },
+  getters: {
+    sequencePermitNumber: function sequencePermitNumber(state) {
+      return state.latestPermitNumber + 1;
+    }
   },
   mutations: {
     populatePermits: function populatePermits(state, payload) {
@@ -16835,7 +16815,8 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
-        state.permits = res; // console.log(res);
+        state.permits = res;
+        state.latestPermitNumber = parseInt(state.permits[0].number); // console.log(state.latestPermitNumber + 1);
 
         return res; // res is an array of objects, where each object contain permit data
       })["catch"](function (err) {
@@ -16864,7 +16845,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main {\n  margin: 0 auto;\n  max-width: 1280px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main {\n  margin: 0 auto;\n  max-width: 1280px;\n}\n@media screen and (max-width: 1420px) {\n.main {\n    padding: 0 10px;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -16888,7 +16869,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.header {\n  padding: 10px 0;\n  background-image:\n    linear-gradient(178deg, rgb(0, 138, 255), rgba(0, 138, 255, 0) 100%),\n    linear-gradient(20deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%),\n    linear-gradient(120deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%);\n\n  border-bottom: 1px solid #aaa;\n  box-shadow: 0 0 10px rgba(0,0,0,0.5);\n}\n.menu {\n  margin: 0 auto;\n  max-width: 1280px;\n\n  display: grid;\n  gap: 20px;\n  grid-template-columns: -webkit-min-content auto -webkit-max-content;\n  grid-template-columns: min-content auto max-content;\n  grid-template-areas: \"logo nav user\";\n}\n.menu__logo {\n  grid-area: logo;\n  place-self: center;\n  max-width: 40px;\n}\n.menu__items {\n  grid-area: nav;\n\n  display: grid;\n  grid-auto-flow: column;\n  grid-auto-columns: -webkit-max-content;\n  grid-auto-columns: max-content;\n}\n.menu__user {\n  grid-area: user;\n  display: flex;\n}\n.menu__item {\n  display: flex;\n}\n.menu__link {\n  margin: 0 auto;\n  padding: 0 20px;\n  border-radius: 8px;\n  text-decoration: none;\n  opacity: 1;\n\n  font-size: 16px;\n  line-height: 20px;\n  text-decoration: none;\n  color: #fff;\n  text-shadow: 0 1px 0 #555;\n\n  overflow: hidden;\n  position: relative;\n  z-index: 1;\n\n  display: flex;\n  align-items: center;\n\n  transition: opacity .1s linear;\n}\n.menu__link::after {\n  content: '';\n  position: absolute;\n  z-index: -1;\n  left: calc((100% + 4rem) * -1);\n  top: 0%;\n  bottom: 0%;\n  width: calc(100% + 4rem);\n  -webkit-clip-path: polygon(0% 0%, 100% 0%, calc(100% - 4rem) 100%, 0% 100%);\n          clip-path: polygon(0% 0%, 100% 0%, calc(100% - 4rem) 100%, 0% 100%);\n  background: #52b7fa;\n  opacity: 0;\n  transition: all 250ms ease-in-out;\n}\n.menu__link:hover::after {\n  left: 0%;\n  opacity: 1;\n}\n.menu__link:hover {\n  cursor: pointer;\n  transform: scale(1.1, 1.1);\n}\n.menu__link_active {\n  color: #ff7;\n  text-shadow: 0 1px 0 #555;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.header {\n  padding: 10px 0;\n  background-image:\n    linear-gradient(178deg, rgb(0, 138, 255), rgba(0, 138, 255, 0) 100%),\n    linear-gradient(20deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%),\n    linear-gradient(120deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%);\n\n  border-bottom: 1px solid #aaa;\n  box-shadow: 0 0 10px rgba(0,0,0,0.5);\n}\n.menu {\n  margin: 0 auto;\n  max-width: 1280px;\n\n  display: grid;\n  gap: 20px;\n  grid-template-columns: -webkit-min-content auto -webkit-max-content;\n  grid-template-columns: min-content auto max-content;\n  grid-template-areas: \"logo nav user\";\n}\n.menu__logo {\n  grid-area: logo;\n  place-self: center;\n  max-width: 40px;\n}\n.menu__items {\n  grid-area: nav;\n\n  display: grid;\n  grid-auto-flow: column;\n  grid-auto-columns: -webkit-max-content;\n  grid-auto-columns: max-content;\n}\n.menu__user {\n  grid-area: user;\n  display: flex;\n}\n.menu__item {\n  display: flex;\n}\n.menu__link {\n  margin: 0 auto;\n  padding: 0 20px;\n  border-radius: 8px;\n  text-decoration: none;\n  opacity: 1;\n\n  font-size: 16px;\n  line-height: 20px;\n  text-decoration: none;\n  color: #fff;\n  text-shadow: 0 1px 0 #555;\n\n  overflow: hidden;\n  position: relative;\n  z-index: 1;\n\n  display: flex;\n  align-items: center;\n\n  transition: opacity .1s linear;\n}\n.menu__link::after {\n  content: '';\n  position: absolute;\n  z-index: -1;\n  left: calc((100% + 4rem) * -1);\n  top: 0%;\n  bottom: 0%;\n  width: calc(100% + 4rem);\n  -webkit-clip-path: polygon(0% 0%, 100% 0%, calc(100% - 4rem) 100%, 0% 100%);\n          clip-path: polygon(0% 0%, 100% 0%, calc(100% - 4rem) 100%, 0% 100%);\n  background: #52b7fa;\n  opacity: 0;\n  transition: all 250ms ease-in-out;\n}\n.menu__link:hover::after {\n  left: 0%;\n  opacity: 1;\n}\n.menu__link:hover {\n  cursor: pointer;\n  transform: scale(1.1, 1.1);\n}\n.menu__link_active {\n  color: #ff7;\n  text-shadow: 0 1px 0 #555;\n}\n@media screen and (max-width: 1420px) {\n.header {\n    padding: 10px;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -16912,7 +16893,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  margin: 0 auto;\n  max-width: 1280px;\n  width: 100%;\n  display: grid;\n  grid-template-columns: 1fr;\n}\n.log__title {\n  padding: 10px 0;\n  width: 100%;\n  max-width: 1280px;\n  text-align: center;\n}\n.log__table {\n  padding: 10px;\n  width: 100%;\n  max-width: 1280px;\n  border-collapse: collapse;\n}\n.log__th {\n  padding: 10px 0;\n  background-color: honeydew;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n}\n.log__tr {\n  padding: 10px 0;\n  background-color: lightyellow;\n}\n.log__td {\n  padding: 8px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n}\n.log__title {\n  padding: 10px 0;\n}\n.log__table {\n  width: 100%;\n  max-width: 90%;\n  border-collapse: collapse;\n}\n.log__trh {\n  background-color: honeydew;\n}\n.log__trh:hover {\n  background-color: rgb(227, 255, 227);\n}\n.log__th {\n  padding: 10px 0;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n}\n.log__tr {\n  padding: 10px 0;\n  background-color: lightyellow;\n}\n.log__tr:hover {\n  background-color: lemonchiffon;\n}\n.log__td {\n  padding: 8px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n}\n@media screen and (max-width: 1420px) {\n.log__table {\n    max-width: 98%;\n}\n}\n@media screen and (min-width: 2000px) {\n.log__table {\n    max-width: 70%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

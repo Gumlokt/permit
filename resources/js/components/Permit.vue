@@ -7,7 +7,7 @@
         <fieldset class="card__fieldset card__fieldset_first">
           <div class="card__text-field">
             <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.number || focuses.number }" for="number">№ пропуска</label>
-            <input type="text" size="10" name="number" class="card__text-input" v-model="permit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number">
+            <input type="text" size="10" name="number" class="card__text-input" v-model="permit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number" disabled>
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-// import { mapState, mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -82,6 +82,7 @@ export default {
 
   methods: {
     // ...mapMutations(['increment']),
+    ...mapMutations(['populatePermits']),
 
     clearInput(inputField) {
       this.permit[inputField] = null;
@@ -110,6 +111,7 @@ export default {
         return response.json();
       })
       .then((res) => {
+        this.populatePermits();
         return res;
       })
       .catch((err) => {
@@ -117,7 +119,7 @@ export default {
       });
 
       console.log(res);
-      // this.resetForm();
+      this.resetForm();
       console.log('saved...');
     },
 
@@ -131,7 +133,7 @@ export default {
   },
 
   computed: {
-    // ...mapState(['permit']),
+    ...mapGetters(['sequencePermitNumber']),
 
     resetButtonIsDisabled() {
       for (const prop in this.permit) {

@@ -28,6 +28,7 @@ class PermitController extends Controller {
         'permits.start',
         'permits.end'
       )
+      ->orderByDesc('permits.number')
       ->get();
 
       return $permits;
