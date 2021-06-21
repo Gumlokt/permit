@@ -107,18 +107,16 @@ export default {
         body: JSON.stringify(this.permit),
       })
       .then((response) => {
-        console.log(response);
-
         return response.json();
       })
       .then((res) => {
-        console.log(res);
         return res;
       })
       .catch((err) => {
         console.log(err);
       });
 
+      console.log(res);
       // this.resetForm();
       console.log('saved...');
     },
@@ -128,25 +126,7 @@ export default {
     },
 
     getPermits() {
-      const res = fetch(`api/permits`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        console.log(res);
-        return res; // res is an array of objects, where each object contain permit data
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-      // console.log(res);
+      console.log(this.$store.state.permits);
     },
   },
 
@@ -266,15 +246,15 @@ export default {
 }
 
 .card__button {
-    padding: 10px;
-    border-radius: 5px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    line-height: 1.2;
-    font-weight: 300;
-    transition: all .4s ease-in-out;
+  padding: 10px;
+  border-radius: 5px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
+  transition: all .4s ease-in-out;
 }
 
 .card__button:hover {

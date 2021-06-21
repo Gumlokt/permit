@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Company;
 use App\Models\Permit;
@@ -13,7 +14,24 @@ class PermitController extends Controller {
   public $data = [];
 
   public function index() {
-    return Permit::all();
+    $permits = DB::table('permits')
+      ->join('companies', 'permits.companies_id', '=', 'companies.id')
+      ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.number',
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'companies.name',
+        'people.position',
+
+        'permits.start',
+        'permits.end'
+      )
+      ->get();
+
+      return $permits;
+      // return Permit::all();
   }
 
   public function show($id) {

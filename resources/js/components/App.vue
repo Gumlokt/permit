@@ -4,16 +4,20 @@
   <main class="main">
     <Permit />
   </main>
+
+  <Log />
 </template>
 
 <script>
 import Header from "./Header";
 import Permit from "./Permit";
+import Log from "./Log";
 
 export default {
   components: {
     Header,
-    Permit
+    Permit,
+    Log
   }
 };
 </script>
