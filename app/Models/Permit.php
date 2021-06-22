@@ -15,8 +15,8 @@ class Permit extends Model {
     $dateEnd = date_format(date_create_from_format('d.m.Y H:i:s', $request['dateEnd'] . ' 23:59:59'), 'Y-m-d H:i:s');
 
     $sql = [
-      'people_id' => $data['company']->id,
-      'companies_id' => $data['person']->id,
+      'people_id' => $data['person']->id,
+      'companies_id' => $data['company']->id,
       'number' => $request['number'],
       'start' => $dateStart,
       'end' => $dateEnd

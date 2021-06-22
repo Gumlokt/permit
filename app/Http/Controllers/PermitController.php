@@ -28,7 +28,7 @@ class PermitController extends Controller {
         'permits.start as dateStart',
         'permits.end as dateEnd'
       )
-      ->orderByDesc('permits.number')
+      ->orderByDesc('permits.id')
       ->get();
 
       return $permits;
@@ -44,15 +44,17 @@ class PermitController extends Controller {
   }
 
   public function store(Request $request) {
-    $this->data['company'] = Company::store($request->all());
-    $this->data['person'] = Person::store($request->all());
+    $clearedInputs = $this->clearSpaces($request->all());
 
-    return Permit::store($request->all(), $this->data);
+    $this->data['company'] = Company::store($clearedInputs);
+    $this->data['person'] = Person::store($clearedInputs);
+
+    return Permit::store($clearedInputs, $this->data);
   }
 
   public function update(Request $request, $id) {
     $permit = Permit::findOrFail($id);
-    $permit->update($request->all());
+    $permit->update($this->clearSpaces($request->all()));
 
     return $permit;
   }

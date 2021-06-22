@@ -16093,9 +16093,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
-        console.log(res);
         _this.newPermit.number = parseInt(res) + 1;
-        return res; // res is an array of objects, where each object contain permit data
+        return res; // res is a last stored permit number
       })["catch"](function (err) {
         console.log(err);
       });
@@ -16156,7 +16155,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     fillUpPermits: function fillUpPermits() {
       // temporary method for development cases
       this.newPermit = {
-        number: '',
+        number: null,
         surname: 'Иванов',
         forename: 'Иван',
         patronymic: 'Иванович',
