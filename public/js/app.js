@@ -16021,11 +16021,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  methods: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(['populatePermits'])),
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(['permits'])),
-  mounted: function mounted() {
-    this.populatePermits(); // get all permits
-  }
+  methods: {
+    formatDate: function formatDate(dateString) {
+      var date = new Date(dateString);
+      var day = String(date.getDate()).padStart(2, '0');
+      var month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zere based, that's why +1 needed
+
+      var year = date.getFullYear();
+      return "".concat(day, ".").concat(month, ".").concat(year);
+    }
+  },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(['storedPermits']))
 });
 
 /***/ }),
@@ -16052,7 +16058,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      permit: {
+      newPermit: {
         number: null,
         surname: null,
         forename: null,
@@ -16075,15 +16081,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(['populatePermits'])), {}, {
+    setNextPermitNumber: function setNextPermitNumber() {
+      var _this = this;
+
+      var res = fetch("api/permits/last", {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      }).then(function (response) {
+        return response.json();
+      }).then(function (res) {
+        console.log(res);
+        _this.newPermit.number = parseInt(res) + 1;
+        return res; // res is an array of objects, where each object contain permit data
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
     clearInput: function clearInput(inputField) {
-      this.permit[inputField] = null;
+      this.newPermit[inputField] = null;
       this.focusInput(inputField);
     },
     focusInput: function focusInput(inputField) {
       this.$refs[inputField].focus();
     },
     resetForm: function resetForm() {
-      this.permit = {
+      this.newPermit = {
         number: null,
         surname: null,
         forename: null,
@@ -16103,9 +16128,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         dateStart: false,
         dateEnd: false
       };
+      this.setNextPermitNumber();
     },
     savePermit: function savePermit() {
-      var _this = this;
+      var _this2 = this;
 
       var res = fetch("api/permits", {
         method: 'POST',
@@ -16113,23 +16139,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.permit)
+        body: JSON.stringify(this.newPermit)
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
-        _this.populatePermits();
+        _this2.populatePermits();
+
+        _this2.resetForm();
 
         return res;
       })["catch"](function (err) {
         console.log(err);
       });
-      console.log(res);
-      this.resetForm();
       console.log('saved...');
     },
     fillUpPermits: function fillUpPermits() {
-      this.permit = {
-        number: '123',
+      // temporary method for development cases
+      this.newPermit = {
+        number: '',
         surname: 'Иванов',
         forename: 'Иван',
         patronymic: 'Иванович',
@@ -16138,15 +16165,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         dateStart: '01.07.2021',
         dateEnd: '31.12.2021'
       };
+      this.setNextPermitNumber();
     },
     getPermits: function getPermits() {
+      // temporary method for development cases
       console.log(this.$store.state.permits);
     }
   }),
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['sequencePermitNumber'])), {}, {
+  computed: {
     resetButtonIsDisabled: function resetButtonIsDisabled() {
-      for (var prop in this.permit) {
-        if (this.permit[prop]) {
+      for (var prop in this.newPermit) {
+        if (this.newPermit[prop]) {
           return false;
         }
       }
@@ -16154,15 +16183,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return true;
     },
     saveButtonIsDisabled: function saveButtonIsDisabled() {
-      for (var prop in this.permit) {
-        if (!this.permit[prop]) {
+      for (var prop in this.newPermit) {
+        if (!this.newPermit[prop]) {
           return true;
         }
       }
 
       return false;
     }
-  })
+  },
+  created: function created() {
+    this.setNextPermitNumber();
+    this.populatePermits(); // get all already stored permits
+  }
 });
 
 /***/ }),
@@ -16304,7 +16337,7 @@ var _hoisted_12 = {
   "class": "log__td"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("table", _hoisted_3, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.permits, function (permit) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("table", _hoisted_3, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.storedPermits, function (permit) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("tr", {
       "class": "log__tr",
       key: permit.id
@@ -16316,13 +16349,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.patronymic), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.name), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.company), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.position), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.start), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(permit.dateStart)), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.end), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(permit.dateEnd)), 1
     /* TEXT */
     )]);
   }), 128
@@ -16490,7 +16523,7 @@ var _hoisted_32 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("form", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("fieldset", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.number || $data.focuses.number
+      'card__text-label_lifted': $data.newPermit.number || $data.focuses.number
     }],
     "for": "number"
   }, "№ пропуска", 2
@@ -16501,7 +16534,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "number",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $data.permit.number = $event;
+      return $data.newPermit.number = $event;
     }),
     onFocus: _cache[2] || (_cache[2] = function ($event) {
       return $data.focuses.number = true;
@@ -16513,14 +16546,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     disabled: ""
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.number]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.number]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('number');
-    }, ["prevent"]))
+    }, ["prevent"])),
+    disabled: ""
   }, [_hoisted_7])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.surname || $data.focuses.surname
+      'card__text-label_lifted': $data.newPermit.surname || $data.focuses.surname
     }],
     "for": "surname"
   }, "Фамилия", 2
@@ -16530,7 +16564,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "surname",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-      return $data.permit.surname = $event;
+      return $data.newPermit.surname = $event;
     }),
     onFocus: _cache[6] || (_cache[6] = function ($event) {
       return $data.focuses.surname = true;
@@ -16542,14 +16576,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "surname"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.surname]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.surname]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('surname');
     }, ["prevent"]))
   }, [_hoisted_9])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.forename || $data.focuses.forename
+      'card__text-label_lifted': $data.newPermit.forename || $data.focuses.forename
     }],
     "for": "forename"
   }, "Имя", 2
@@ -16559,7 +16593,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "forename",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
-      return $data.permit.forename = $event;
+      return $data.newPermit.forename = $event;
     }),
     onFocus: _cache[10] || (_cache[10] = function ($event) {
       return $data.focuses.forename = true;
@@ -16571,14 +16605,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "forename"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.forename]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.forename]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('forename');
     }, ["prevent"]))
   }, [_hoisted_11])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.patronymic || $data.focuses.patronymic
+      'card__text-label_lifted': $data.newPermit.patronymic || $data.focuses.patronymic
     }],
     "for": "patronymic"
   }, "Отчество", 2
@@ -16588,7 +16622,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "patronymic",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[13] || (_cache[13] = function ($event) {
-      return $data.permit.patronymic = $event;
+      return $data.newPermit.patronymic = $event;
     }),
     onFocus: _cache[14] || (_cache[14] = function ($event) {
       return $data.focuses.patronymic = true;
@@ -16600,14 +16634,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "patronymic"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.patronymic]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.patronymic]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('patronymic');
     }, ["prevent"]))
   }, [_hoisted_13])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("fieldset", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.company || $data.focuses.company
+      'card__text-label_lifted': $data.newPermit.company || $data.focuses.company
     }],
     "for": "company"
   }, "Компания", 2
@@ -16617,7 +16651,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "company",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[17] || (_cache[17] = function ($event) {
-      return $data.permit.company = $event;
+      return $data.newPermit.company = $event;
     }),
     onFocus: _cache[18] || (_cache[18] = function ($event) {
       return $data.focuses.company = true;
@@ -16628,14 +16662,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     ref: "company"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.company]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.company]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[20] || (_cache[20] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('company');
     }, ["prevent"]))
   }, [_hoisted_16])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.position || $data.focuses.position
+      'card__text-label_lifted': $data.newPermit.position || $data.focuses.position
     }],
     "for": "position"
   }, "Должность", 2
@@ -16645,7 +16679,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "position",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[21] || (_cache[21] = function ($event) {
-      return $data.permit.position = $event;
+      return $data.newPermit.position = $event;
     }),
     onFocus: _cache[22] || (_cache[22] = function ($event) {
       return $data.focuses.position = true;
@@ -16657,14 +16691,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "position"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.position]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.position]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[24] || (_cache[24] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('position');
     }, ["prevent"]))
   }, [_hoisted_18])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.dateStart || $data.focuses.dateStart
+      'card__text-label_lifted': $data.newPermit.dateStart || $data.focuses.dateStart
     }],
     "for": "dateStart"
   }, "Действует с", 2
@@ -16674,7 +16708,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "dateStart",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[25] || (_cache[25] = function ($event) {
-      return $data.permit.dateStart = $event;
+      return $data.newPermit.dateStart = $event;
     }),
     onFocus: _cache[26] || (_cache[26] = function ($event) {
       return $data.focuses.dateStart = true;
@@ -16686,14 +16720,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "dateStart"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.dateStart]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.dateStart]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[28] || (_cache[28] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('dateStart');
     }, ["prevent"]))
   }, [_hoisted_20])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': $data.permit.dateEnd || $data.focuses.dateEnd
+      'card__text-label_lifted': $data.newPermit.dateEnd || $data.focuses.dateEnd
     }],
     "for": "dateEnd"
   }, "Действует по", 2
@@ -16703,7 +16737,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     name: "dateEnd",
     "class": "card__text-input",
     "onUpdate:modelValue": _cache[29] || (_cache[29] = function ($event) {
-      return $data.permit.dateEnd = $event;
+      return $data.newPermit.dateEnd = $event;
     }),
     onFocus: _cache[30] || (_cache[30] = function ($event) {
       return $data.focuses.dateEnd = true;
@@ -16715,7 +16749,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     id: "dateEnd"
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.permit.dateEnd]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.newPermit.dateEnd]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
     onClick: _cache[32] || (_cache[32] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('dateEnd');
@@ -16750,7 +16784,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     disabled: $options.saveButtonIsDisabled
   }, [_hoisted_30, _hoisted_31], 8
   /* PROPS */
-  , ["disabled"])])]), _hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.permit.number), 1
+  , ["disabled"])])]), _hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.newPermit.number), 1
   /* TEXT */
   )]);
 }
@@ -16795,15 +16829,14 @@ __webpack_require__.r(__webpack_exports__);
 var store = (0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({
   state: function state() {
     return {
-      permits: [],
-      latestPermitNumber: null
+      storedPermits: []
     };
   },
-  getters: {
-    sequencePermitNumber: function sequencePermitNumber(state) {
-      return state.latestPermitNumber + 1;
-    }
-  },
+  // getters: {
+  //   newPermitNumber: state => {
+  //     return state.latestPermitNumber + 1;
+  //   }
+  // },
   mutations: {
     populatePermits: function populatePermits(state, payload) {
       var res = fetch("api/permits", {
@@ -16815,9 +16848,7 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
-        state.permits = res;
-        state.latestPermitNumber = parseInt(state.permits[0].number); // console.log(state.latestPermitNumber + 1);
-
+        state.storedPermits = res;
         return res; // res is an array of objects, where each object contain permit data
       })["catch"](function (err) {
         console.log(err);

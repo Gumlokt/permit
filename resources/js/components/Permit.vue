@@ -6,52 +6,52 @@
       <div class="card__body">
         <fieldset class="card__fieldset card__fieldset_first">
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.number || focuses.number }" for="number">№ пропуска</label>
-            <input type="text" size="10" name="number" class="card__text-input" v-model="permit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number" disabled>
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')"><span class="material-icons material-icons-outlined">clear</span></button>
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.number || focuses.number }" for="number">№ пропуска</label>
+            <input type="text" size="10" name="number" class="card__text-input" v-model="newPermit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number" disabled>
+            <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')" disabled><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.surname || focuses.surname }" for="surname">Фамилия</label>
-            <input type="text" name="surname" class="card__text-input" v-model="permit.surname" @focus="focuses.surname = true" @blur="focuses.surname = false" ref="surname" id="surname">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.surname || focuses.surname }" for="surname">Фамилия</label>
+            <input type="text" name="surname" class="card__text-input" v-model="newPermit.surname" @focus="focuses.surname = true" @blur="focuses.surname = false" ref="surname" id="surname">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('surname')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.forename || focuses.forename }" for="forename">Имя</label>
-            <input type="text" name="forename" class="card__text-input" v-model="permit.forename" @focus="focuses.forename = true" @blur="focuses.forename = false" ref="forename" id="forename">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.forename || focuses.forename }" for="forename">Имя</label>
+            <input type="text" name="forename" class="card__text-input" v-model="newPermit.forename" @focus="focuses.forename = true" @blur="focuses.forename = false" ref="forename" id="forename">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('forename')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.patronymic || focuses.patronymic }" for="patronymic">Отчество</label>
-            <input type="text" name="patronymic" class="card__text-input" v-model="permit.patronymic" @focus="focuses.patronymic = true" @blur="focuses.patronymic = false" ref="patronymic" id="patronymic">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.patronymic || focuses.patronymic }" for="patronymic">Отчество</label>
+            <input type="text" name="patronymic" class="card__text-input" v-model="newPermit.patronymic" @focus="focuses.patronymic = true" @blur="focuses.patronymic = false" ref="patronymic" id="patronymic">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('patronymic')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
         </fieldset>
 
         <fieldset class="card__fieldset">
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.company || focuses.company }" for="company">Компания</label>
-            <input type="text" name="company" class="card__text-input" v-model="permit.company" @focus="focuses.company = true" @blur="focuses.company = false" ref="company">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.company || focuses.company }" for="company">Компания</label>
+            <input type="text" name="company" class="card__text-input" v-model="newPermit.company" @focus="focuses.company = true" @blur="focuses.company = false" ref="company">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('company')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.position || focuses.position }" for="position">Должность</label>
-            <input type="text" name="position" class="card__text-input" v-model="permit.position" @focus="focuses.position = true" @blur="focuses.position = false" ref="position" id="position">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.position || focuses.position }" for="position">Должность</label>
+            <input type="text" name="position" class="card__text-input" v-model="newPermit.position" @focus="focuses.position = true" @blur="focuses.position = false" ref="position" id="position">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('position')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.dateStart || focuses.dateStart }" for="dateStart">Действует с</label>
-            <input type="text" name="dateStart" class="card__text-input" v-model="permit.dateStart" @focus="focuses.dateStart = true" @blur="focuses.dateStart = false" ref="dateStart" id="dateStart">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateStart || focuses.dateStart }" for="dateStart">Действует с</label>
+            <input type="text" name="dateStart" class="card__text-input" v-model="newPermit.dateStart" @focus="focuses.dateStart = true" @blur="focuses.dateStart = false" ref="dateStart" id="dateStart">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateStart')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': permit.dateEnd || focuses.dateEnd }" for="dateEnd">Действует по</label>
-            <input type="text" name="dateEnd" class="card__text-input" v-model="permit.dateEnd" @focus="focuses.dateEnd = true" @blur="focuses.dateEnd = false" ref="dateEnd" id="dateEnd">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateEnd || focuses.dateEnd }" for="dateEnd">Действует по</label>
+            <input type="text" name="dateEnd" class="card__text-input" v-model="newPermit.dateEnd" @focus="focuses.dateEnd = true" @blur="focuses.dateEnd = false" ref="dateEnd" id="dateEnd">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateEnd')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
         </fieldset>
@@ -65,27 +65,46 @@
       </div>
 
     </form>
-        &nbsp;&nbsp;&nbsp;<span>{{ permit.number }}</span>
+        &nbsp;&nbsp;&nbsp;<span>{{ newPermit.number }}</span>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 
 export default {
   data() {
     return {
-      permit: { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, },
+      newPermit: { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, },
       focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
     }
   },
 
   methods: {
-    // ...mapMutations(['increment']),
     ...mapMutations(['populatePermits']),
 
+    setNextPermitNumber() {
+      const res = fetch(`api/permits/last`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        this.newPermit.number = parseInt(res) + 1;
+        return res; // res is a last stored permit number
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    },
+
     clearInput(inputField) {
-      this.permit[inputField] = null;
+      this.newPermit[inputField] = null;
       this.focusInput(inputField);
     },
 
@@ -94,8 +113,9 @@ export default {
     },
 
     resetForm() {
-      this.permit = { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, };
-      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
+      this.newPermit = { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, };
+      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, };
+      this.setNextPermitNumber();
     },
 
     savePermit() {
@@ -105,39 +125,37 @@ export default {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.permit),
+        body: JSON.stringify(this.newPermit),
       })
       .then((response) => {
         return response.json();
       })
       .then((res) => {
         this.populatePermits();
+        this.resetForm();
         return res;
       })
       .catch((err) => {
         console.log(err);
       });
 
-      console.log(res);
-      this.resetForm();
       console.log('saved...');
     },
 
-    fillUpPermits() {
-      this.permit = { number: '123', surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '01.07.2021', dateEnd: '31.12.2021', };
+    fillUpPermits() { // temporary method for development cases
+      this.newPermit = { number: null, surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '01.07.2021', dateEnd: '31.12.2021', };
+      this.setNextPermitNumber();
     },
 
-    getPermits() {
+    getPermits() { // temporary method for development cases
       console.log(this.$store.state.permits);
     },
   },
 
   computed: {
-    ...mapGetters(['sequencePermitNumber']),
-
     resetButtonIsDisabled() {
-      for (const prop in this.permit) {
-        if(this.permit[prop]) {
+      for (const prop in this.newPermit) {
+        if(this.newPermit[prop]) {
           return false;
         }
       }
@@ -146,14 +164,19 @@ export default {
     },
 
     saveButtonIsDisabled() {
-      for (const prop in this.permit) {
-        if(!this.permit[prop]) {
+      for (const prop in this.newPermit) {
+        if(!this.newPermit[prop]) {
           return true;
         }
       }
 
       return false;
     },
+  },
+
+  created() {
+    this.setNextPermitNumber();
+    this.populatePermits(); // get all already stored permits
   }
 };
 </script>

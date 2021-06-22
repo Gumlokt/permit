@@ -14,35 +14,38 @@
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in permits" v-bind:key="permit.id">
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id">
         <td class="log__td">{{ permit.number }}</td>
         <td class="log__td">{{ permit.surname }}</td>
         <td class="log__td">{{ permit.forename }}</td>
         <td class="log__td">{{ permit.patronymic }}</td>
-        <td class="log__td">{{ permit.name }}</td>
+        <td class="log__td">{{ permit.company }}</td>
         <td class="log__td">{{ permit.position }}</td>
-        <td class="log__td">{{ permit.start }}</td>
-        <td class="log__td">{{ permit.end }}</td>
+        <td class="log__td">{{ formatDate(permit.dateStart) }}</td>
+        <td class="log__td">{{ formatDate(permit.dateEnd) }}</td>
       </tr>
     </table>
   </section>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   methods: {
-    ...mapMutations(['populatePermits']),
+    formatDate(dateString) {
+      let date = new Date(dateString);
+      let day = String(date.getDate()).padStart(2, '0');
+      let month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zere based, that's why +1 needed
+      let year = date.getFullYear();
+
+      return `${day}.${month}.${year}`;
+    },
   },
 
   computed: {
-    ...mapState(['permits'])
+    ...mapState(['storedPermits'])
   },
-
-  mounted() {
-    this.populatePermits(); // get all permits
-  }
 };
 </script>
 

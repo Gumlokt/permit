@@ -3,16 +3,15 @@ import { createStore } from "vuex";
 export const store = createStore({
   state() {
     return {
-      permits: [],
-      latestPermitNumber: null,
+      storedPermits: [],
     };
   },
 
-  getters: {
-    sequencePermitNumber: state => {
-      return state.latestPermitNumber + 1;
-    }
-  },
+  // getters: {
+  //   newPermitNumber: state => {
+  //     return state.latestPermitNumber + 1;
+  //   }
+  // },
 
   mutations: {
     populatePermits(state, payload) {
@@ -23,19 +22,17 @@ export const store = createStore({
           "Content-Type": "application/json",
         },
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((res) => {
-          state.permits = res;
-          state.latestPermitNumber = parseInt(state.permits[0].number);
-
-          // console.log(state.latestPermitNumber + 1);
-          return res; // res is an array of objects, where each object contain permit data
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        state.storedPermits = res;
+        return res; // res is an array of objects, where each object contain permit data
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     },
+    
   },
 });

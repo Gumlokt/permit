@@ -22,17 +22,21 @@ class PermitController extends Controller {
         'people.surname',
         'people.forename',
         'people.patronymic',
-        'companies.name',
+        'companies.name as company',
         'people.position',
 
-        'permits.start',
-        'permits.end'
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
       )
       ->orderByDesc('permits.number')
       ->get();
 
       return $permits;
       // return Permit::all();
+  }
+
+  public function last() {
+    return Permit::max('number'); // last permit number
   }
 
   public function show($id) {
