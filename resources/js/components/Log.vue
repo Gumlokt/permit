@@ -22,7 +22,10 @@
         <td class="log__td">{{ permit.company }}</td>
         <td class="log__td">{{ permit.position }}</td>
         <td class="log__td">{{ formatDate(permit.dateStart) }}</td>
-        <td class="log__td">{{ formatDate(permit.dateEnd) }}</td>
+        <td class="log__td">
+          {{ formatDate(permit.dateEnd) }}
+          <Toolbar v-bind:permit="permit"/>
+        </td>
       </tr>
     </table>
   </section>
@@ -30,8 +33,13 @@
 
 <script>
 import { mapState } from "vuex";
+import Toolbar from "./Toolbar";
 
 export default {
+  components: {
+    Toolbar,
+  },
+
   methods: {
     formatDate(dateString) {
       let date = new Date(dateString);
@@ -76,7 +84,7 @@ export default {
 }
 
 .log__th {
-  padding: 10px 0;
+  padding: 11px 0;
   border: 1px solid #ccc;
   font-size: 16px;
   line-height: 1.2;
@@ -88,12 +96,23 @@ export default {
   background-color: lightyellow;
 }
 
+.log__tr .toolbar {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.log__tr:hover .toolbar {
+  opacity: 1;
+  visibility: visible;
+}
+
 .log__tr:hover {
   background-color: lemonchiffon;
 }
 
 .log__td {
-  padding: 8px;
+  position: relative;
+  padding: 10px;
   border: 1px solid #ccc;
   font-size: 16px;
   line-height: 1.2;

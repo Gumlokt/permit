@@ -130,12 +130,18 @@ export default {
         body: JSON.stringify(this.newPermit),
       })
       .then((response) => {
+         console.log(response.status);
         return response.json();
       })
       .then((res) => {
         if(res.error) {
-          console.log(res.message);
           this.setPopupMessage(res.message);
+          this.openPopup();
+          return;
+        }
+
+        if(res.errors) {
+          this.setPopupMessage(`Похоже, что водимымые данные содержат ошибку. Если после исправления ввода данных ошибка не исчезнет, обратитесь  за помощью к разработчику приложения. [ ${res.message} ]`);
           this.openPopup();
           return;
         }
@@ -242,6 +248,7 @@ export default {
 .card__text-field:hover .card__button_reset-input {
   opacity: 1;
   visibility: visible;
+  transform: rotate(90deg) scale(1.05, 1.05);
 }
 
 .card__text-field:focus-within {
@@ -349,7 +356,7 @@ export default {
 }
 
 .card__button_reset-form {
-    border: 1px solid coral;
+  border: 1px solid coral;
 }
 
 .card__button_save {

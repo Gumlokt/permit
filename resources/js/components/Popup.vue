@@ -85,23 +85,24 @@ export default {
   position: absolute;
   top: -40px;
   right: -40px;
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
 
   border: 0;
   background-color: transparent;
   background-image: url(../../images/icons/cross.svg);
-  background-size: 50px;
+  background-size: 46px;
   background-position: center;
   background-repeat: no-repeat;
+  opacity: .8;
 
   transition: all .4s ease;
 }
 
 .popup__btn-close:hover {
   cursor: pointer;
-  opacity: .7;
-  transform: rotate(90deg);
+  opacity: 1;
+  transform: rotate(90deg) scale(1.1, 1.1);
 }
 
 .popup__header {
