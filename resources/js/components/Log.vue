@@ -44,8 +44,9 @@ export default {
   },
 
   computed: {
-    ...mapState(['storedPermits'])
+    ...mapState({ storedPermits: state => state.permit.storedPermits }),
   },
+
 };
 </script>
 

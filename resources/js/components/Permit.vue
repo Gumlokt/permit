@@ -81,7 +81,9 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['populatePermits']),
+    // ...mapMutations(['populatePermits']),
+    ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
+    ...mapMutations('permit', ['populatePermits']),
 
     setNextPermitNumber() {
       const res = fetch(`api/permits/last`, {
@@ -131,6 +133,13 @@ export default {
         return response.json();
       })
       .then((res) => {
+        if(res.error) {
+          console.log(res.message);
+          this.setPopupMessage(res.message);
+          this.openPopup();
+          return;
+        }
+
         this.populatePermits();
         this.resetForm();
         return res;
@@ -143,12 +152,12 @@ export default {
     },
 
     fillUpPermits() { // temporary method for development cases
-      this.newPermit = { number: null, surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '01.07.2021', dateEnd: '31.12.2021', };
+      this.newPermit = { number: null, surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '20.08.2021', dateEnd: '15.08.2021', };
       this.setNextPermitNumber();
     },
 
     getPermits() { // temporary method for development cases
-      console.log(this.$store.state.permits);
+      console.log(this.$store.state.permit.storedPermits);
     },
   },
 

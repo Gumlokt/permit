@@ -9,6 +9,10 @@ class Person extends Model {
   use HasFactory;
   protected $fillable = [ 'surname', 'forename', 'patronymic', 'position' ];
 
+  public function permits() {
+    return $this->hasMany('App\Models\Permit');
+  }
+
   public static function store($input) {
     $sql = [
       'surname' => $input['surname'],

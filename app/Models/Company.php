@@ -9,6 +9,11 @@ class Company extends Model {
   use HasFactory;
   protected $fillable = [ 'name' ];
 
+  public function permits() {
+    return $this->hasMany('App\Models\Permit');
+  }
+
+
   public static function store($input) {
     return self::firstOrCreate(['name' => $input['company']]);
   }

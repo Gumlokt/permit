@@ -18,6 +18,7 @@ class PermitController extends Controller {
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
       ->select(
+        'permits.id',
         'permits.number',
         'people.surname',
         'people.forename',
@@ -44,6 +45,27 @@ class PermitController extends Controller {
   }
 
   public function store(Request $request) {
+    $validated = $request->validate([
+      'number' => 'required|numeric',
+      'surname' => 'required',
+      'forename' => 'required',
+      'patronymic' => 'required',
+      'company' => 'required',
+      'position' => 'required',
+      'dateStart' => 'required|date_format:d.m.Y',
+      'dateEnd' => 'required|date_format:d.m.Y',
+    ]);
+
+    // start date can not be older end date
+    if(date_format(date_create_from_format('d.m.Y H:i:s', $request->input('dateStart') . ' 00:00:00'), 'Y-m-d H:i:s') > date_format(date_create_from_format('d.m.Y H:i:s', $request->input('dateEnd') . ' 00:00:00'), 'Y-m-d H:i:s')) {
+      return response()->json([
+        'error' => true,
+        'message' => 'Дата начала действия пропуска не может быть позднее даты окончания действия пропуска.',
+      ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+    }
+
+
+
     $clearedInputs = $this->clearSpaces($request->all());
 
     $this->data['company'] = Company::store($clearedInputs);
