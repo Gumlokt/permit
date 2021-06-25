@@ -44,7 +44,7 @@ export default {
     formatDate(dateString) {
       let date = new Date(dateString);
       let day = String(date.getDate()).padStart(2, '0');
-      let month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zere based, that's why +1 needed
+      let month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zero based, that's why +1 needed
       let year = date.getFullYear();
 
       return `${day}.${month}.${year}`;

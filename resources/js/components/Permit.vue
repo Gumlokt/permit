@@ -59,23 +59,22 @@
 
       <div class="card__footer">
         <button type="reset" class="card__button card__button_temporary" @click="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button>
-        <button type="reset" class="card__button card__button_temporary" @click="fillUpPermits"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
+        <button type="reset" class="card__button card__button_temporary" @click="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
         <button type="reset" class="card__button card__button_reset-form" @click="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
         <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
 
     </form>
-        &nbsp;&nbsp;&nbsp;<span>{{ newPermit.number }}</span>
+        &nbsp;&nbsp;&nbsp;<span>{{ newPermit.id }}</span>
   </section>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
     return {
-      newPermit: { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, },
       focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
     }
   },
@@ -83,27 +82,10 @@ export default {
   methods: {
     // ...mapMutations(['populatePermits']),
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
+    ...mapMutations('permit', ['fillInNewPermit']), // get dummy data
+    ...mapMutations('permit', ['setNextPermitNumber']),
     ...mapMutations('permit', ['populatePermits']),
-
-    setNextPermitNumber() {
-      const res = fetch(`api/permits/last`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        this.newPermit.number = parseInt(res) + 1;
-        return res; // res is a last stored permit number
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    },
+    ...mapMutations('permit', ['resetNewPermit']),
 
     clearInput(inputField) {
       this.newPermit[inputField] = null;
@@ -115,14 +97,14 @@ export default {
     },
 
     resetForm() {
-      this.newPermit = { number: null, surname: null, forename: null, patronymic: null, company: null, position: null, dateStart: null, dateEnd: null, };
-      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, };
+      this.resetNewPermit();
       this.setNextPermitNumber();
+      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, };
     },
 
     savePermit() {
-      const res = fetch(`api/permits`, {
-        method: 'POST',
+      const res = fetch(this.newPermitActionPath.path, {
+        method: this.newPermitActionPath.method,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -157,17 +139,17 @@ export default {
       console.log('saved...');
     },
 
-    fillUpPermits() { // temporary method for development cases
-      this.newPermit = { number: null, surname: 'Иванов', forename: 'Иван', patronymic: 'Иванович', company: 'ООО Рога и Копыта', position: 'Ведущий специалист', dateStart: '20.08.2021', dateEnd: '15.08.2021', };
-      this.setNextPermitNumber();
-    },
-
     getPermits() { // temporary method for development cases
       console.log(this.$store.state.permit.storedPermits);
     },
   },
 
   computed: {
+    ...mapState({
+      newPermit: state => state.permit.newPermit,
+      newPermitActionPath: state => state.permit.newPermitActionPath,
+    }),
+
     resetButtonIsDisabled() {
       for (const prop in this.newPermit) {
         if(this.newPermit[prop]) {
@@ -180,7 +162,7 @@ export default {
 
     saveButtonIsDisabled() {
       for (const prop in this.newPermit) {
-        if(!this.newPermit[prop]) {
+        if(prop != 'id' && !this.newPermit[prop]) {
           return true;
         }
       }

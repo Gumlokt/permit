@@ -36,13 +36,16 @@ class PermitController extends Controller {
       // return Permit::all();
   }
 
+
   public function last() {
     return Permit::max('number'); // last permit number
   }
 
+
   public function show($id) {
     return Permit::find($id);
   }
+
 
   public function store(Request $request) {
     $validated = $request->validate([
@@ -64,8 +67,6 @@ class PermitController extends Controller {
       ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
     }
 
-
-
     $clearedInputs = $this->clearSpaces($request->all());
 
     $this->data['company'] = Company::store($clearedInputs);
@@ -74,17 +75,62 @@ class PermitController extends Controller {
     return Permit::store($clearedInputs, $this->data);
   }
 
+
   public function update(Request $request, $id) {
+    $validated = $request->validate([
+      'number' => 'required|numeric',
+      'surname' => 'required',
+      'forename' => 'required',
+      'patronymic' => 'required',
+      'company' => 'required',
+      'position' => 'required',
+      'dateStart' => 'required|date_format:d.m.Y',
+      'dateEnd' => 'required|date_format:d.m.Y',
+    ]);
+
+    if(date_format(date_create_from_format('d.m.Y H:i:s', $request->input('dateStart') . ' 00:00:00'), 'Y-m-d H:i:s') > date_format(date_create_from_format('d.m.Y H:i:s', $request->input('dateEnd') . ' 00:00:00'), 'Y-m-d H:i:s')) {
+      return response()->json([
+        'error' => true,
+        'message' => 'Дата начала действия пропуска не может быть позднее даты окончания действия пропуска.',
+      ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+    }
+    
+    $clearedInputs = $this->clearSpaces($request->all());
+
     $permit = Permit::findOrFail($id);
-    $permit->update($this->clearSpaces($request->all()));
+
+    // // разберемся с компанией
+    // $company = Company::find($permit->companies_id);
+    // $newCompany = Company::where('name', '=', $clearedInputs->company)->first();
+
+    // $this->data['company'] = Company::store($clearedInputs);
+
+    // $permit->update($this->clearSpaces($request->all()));
 
     return $permit;
   }
+
 
   public function delete(Request $request, $id) {
     $permit = Permit::findOrFail($id);
     $permit->delete();
 
+    $this->clearDb($permit);
+
     return 204;
+  }
+
+
+  // Delete unused companies and persons from DB if they are exist
+  private function clearDb($deletedPermit) {
+    $anotherPermit = Permit::where('companies_id', '=', $deletedPermit->companies_id)->first();
+    if (!$anotherPermit) {
+      Company::destroy($deletedPermit->companies_id);
+    }
+
+    $anotherPermit = Permit::where('people_id', '=', $deletedPermit->people_id)->first();
+    if (!$anotherPermit) {
+      Person::destroy($deletedPermit->companies_id);
+    }
   }
 }

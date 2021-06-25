@@ -1,8 +1,8 @@
 <template>
   <div class="toolbar">
-    <button class="toolbar__btn toolbar__btn-delete" @click="deletePermit(permit.id)"><span class="material-icons-outlined md-24">clear</span></button>
-    <button class="toolbar__btn toolbar__btn-edit"><span class="material-icons-outlined md-24">edit</span></button>
-    <button class="toolbar__btn toolbar__btn-copy"><span class="material-icons-outlined md-24">content_copy</span></button>
+    <button class="toolbar__btn toolbar__btn-delete" @click="onPermitDelete"><span class="material-icons-outlined md-24">clear</span></button>
+    <button class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)"><span class="material-icons-outlined md-24">edit</span></button>
+    <button class="toolbar__btn toolbar__btn-copy" @click="copyPermit(permit)"><span class="material-icons-outlined md-24">content_copy</span></button>
   </div>
 </template>
 
@@ -19,6 +19,14 @@ export default {
   
   methods: {
     ...mapMutations('permit', ['deletePermit']),
+    ...mapMutations('permit', ['editPermit']),
+    ...mapMutations('permit', ['copyPermit']),
+
+    onPermitDelete() {
+      if (confirm(`Вы дейстительно желаете удалить этот пропуск № ${this.permit.number} из базы?`)) {
+        this.deletePermit(this.permit.id);
+      }
+    }
   }
 };
 </script>
@@ -39,7 +47,7 @@ export default {
 .toolbar__btn {
   width: 40px;
   height: 35px;
-  background-color: rgba(250, 240, 230, 0.6);
+  background-color: rgba(250, 240, 230, 0.85);
   border-radius: 4px;
   border: none;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, .2);
