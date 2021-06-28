@@ -16161,6 +16161,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     Toolbar: _Toolbar__WEBPACK_IMPORTED_MODULE_0__.default
   },
+  data: function data() {
+    return {
+      curTime: null
+    };
+  },
   methods: {
     formatDate: function formatDate(dateString) {
       var date = new Date(dateString);
@@ -16169,13 +16174,31 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var year = date.getFullYear();
       return "".concat(day, ".").concat(month, ".").concat(year);
+    },
+    getCurrentDateTime: function getCurrentDateTime() {
+      var date = new Date();
+      var day = String(date.getDate()).padStart(2, '0');
+      var month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zero based, that's why +1 needed
+
+      var year = date.getFullYear();
+      var hour = String(date.getHours()).padStart(2, '0');
+      var minute = String(date.getMinutes()).padStart(2, '0');
+      var second = String(date.getSeconds()).padStart(2, '0');
+      return "".concat(year, "-").concat(month, "-").concat(day, " ").concat(hour, ":").concat(minute, ":").concat(second);
     }
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)({
     storedPermits: function storedPermits(state) {
       return state.permit.storedPermits;
     }
-  }))
+  })),
+  created: function created() {
+    var _this = this;
+
+    setInterval(function () {
+      _this.curTime = _this.getCurrentDateTime();
+    }, 1000);
+  }
 });
 
 /***/ }),
@@ -16247,7 +16270,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         },
         body: JSON.stringify(this.newPermit)
       }).then(function (response) {
-        console.log(response.status);
         return response.json();
       }).then(function (res) {
         if (res.error) {
@@ -16273,8 +16295,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return res;
       })["catch"](function (err) {
         console.log(err);
-      });
-      console.log('saved...');
+      }); // console.log('saved...');
     },
     getPermits: function getPermits() {
       // temporary method for development cases
@@ -16378,12 +16399,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     permit: {
       type: Object,
       required: true
+    },
+    disabled: {
+      type: Blob,
+      required: true
     }
   },
-  methods: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['deletePermit'])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['editPermit'])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['copyPermit'])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['deletePermit'])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['expirePermit'])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['editPermit'])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)('permit', ['copyPermit'])), {}, {
     onPermitDelete: function onPermitDelete() {
-      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0436\u0435\u043B\u0430\u0435\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C \u044D\u0442\u043E\u0442 \u043F\u0440\u043E\u043F\u0443\u0441\u043A \u2116 ".concat(this.permit.number, " \u0438\u0437 \u0431\u0430\u0437\u044B?"))) {
+      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0436\u0435\u043B\u0430\u0435\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C \u043F\u0440\u043E\u043F\u0443\u0441\u043A \u2116 ".concat(this.permit.number, " \u0438\u0437 \u0431\u0430\u0437\u044B \u0434\u0430\u043D\u043D\u044B\u0445 \u0431\u0435\u0437 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F?"))) {
         this.deletePermit(this.permit.id);
+      }
+    },
+    onPermitExpire: function onPermitExpire() {
+      if (confirm("\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0436\u0435\u043B\u0430\u0435\u0442\u0435 \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0438\u0441\u0442\u0451\u043A\u0448\u0438\u043C \u0441\u0440\u043E\u043A \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u043F\u0440\u043E\u043F\u0443\u0441\u043A\u0430 \u2116 ".concat(this.permit.number, "?"))) {
+        this.expirePermit(this.permit.id);
       }
     }
   })
@@ -16499,9 +16529,9 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("
   "class": "log__th"
 }, "Отчество"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
   "class": "log__th"
-}, "Компания"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
-  "class": "log__th"
 }, "Должность"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
+  "class": "log__th"
+}, "Компания"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
   "class": "log__th"
 }, "Действует с"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", {
   "class": "log__th"
@@ -16538,7 +16568,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("table", _hoisted_3, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.storedPermits, function (permit) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("tr", {
-      "class": "log__tr",
+      "class": ["log__tr", {
+        'log__tr_upcoming': permit.dateStart > $data.curTime,
+        'log__tr_expired': $data.curTime > permit.dateEnd
+      }],
       key: permit.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.number), 1
     /* TEXT */
@@ -16548,22 +16581,27 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.patronymic), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.company), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.position), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.position), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(permit.company), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(permit.dateStart)), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(permit.dateEnd)) + " ", 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toolbar, {
-      permit: permit
+      permit: permit,
+      disabled: $data.curTime > permit.dateEnd
     }, null, 8
     /* PROPS */
-    , ["permit"])])]);
+    , ["permit", "disabled"])])], 2
+    /* CLASS */
+    );
   }), 128
   /* KEYED_FRAGMENT */
-  ))])]);
+  ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h4", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.curTime), 1
+  /* TEXT */
+  )]);
 }
 
 /***/ }),
@@ -16844,34 +16882,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, ["prevent"]))
   }, [_hoisted_13])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("fieldset", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
-      'card__text-label_lifted': _ctx.newPermit.company || $data.focuses.company
-    }],
-    "for": "company"
-  }, "Компания", 2
-  /* CLASS */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
-    type: "text",
-    name: "company",
-    "class": "card__text-input",
-    "onUpdate:modelValue": _cache[17] || (_cache[17] = function ($event) {
-      return _ctx.newPermit.company = $event;
-    }),
-    onFocus: _cache[18] || (_cache[18] = function ($event) {
-      return $data.focuses.company = true;
-    }),
-    onBlur: _cache[19] || (_cache[19] = function ($event) {
-      return $data.focuses.company = false;
-    }),
-    ref: "company"
-  }, null, 544
-  /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.newPermit.company]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
-    "class": "card__button card__button_reset-input",
-    onClick: _cache[20] || (_cache[20] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-      return $options.clearInput('company');
-    }, ["prevent"]))
-  }, [_hoisted_16])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
-    "class": ["card__text-label", {
       'card__text-label_lifted': _ctx.newPermit.position || $data.focuses.position
     }],
     "for": "position"
@@ -16881,13 +16891,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     type: "text",
     name: "position",
     "class": "card__text-input",
-    "onUpdate:modelValue": _cache[21] || (_cache[21] = function ($event) {
+    "onUpdate:modelValue": _cache[17] || (_cache[17] = function ($event) {
       return _ctx.newPermit.position = $event;
     }),
-    onFocus: _cache[22] || (_cache[22] = function ($event) {
+    onFocus: _cache[18] || (_cache[18] = function ($event) {
       return $data.focuses.position = true;
     }),
-    onBlur: _cache[23] || (_cache[23] = function ($event) {
+    onBlur: _cache[19] || (_cache[19] = function ($event) {
       return $data.focuses.position = false;
     }),
     ref: "position",
@@ -16896,8 +16906,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* HYDRATE_EVENTS, NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.newPermit.position]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "card__button card__button_reset-input",
-    onClick: _cache[24] || (_cache[24] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+    onClick: _cache[20] || (_cache[20] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
       return $options.clearInput('position');
+    }, ["prevent"]))
+  }, [_hoisted_16])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+    "class": ["card__text-label", {
+      'card__text-label_lifted': _ctx.newPermit.company || $data.focuses.company
+    }],
+    "for": "company"
+  }, "Компания", 2
+  /* CLASS */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    type: "text",
+    name: "company",
+    "class": "card__text-input",
+    "onUpdate:modelValue": _cache[21] || (_cache[21] = function ($event) {
+      return _ctx.newPermit.company = $event;
+    }),
+    onFocus: _cache[22] || (_cache[22] = function ($event) {
+      return $data.focuses.company = true;
+    }),
+    onBlur: _cache[23] || (_cache[23] = function ($event) {
+      return $data.focuses.company = false;
+    }),
+    ref: "company"
+  }, null, 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.newPermit.company]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+    "class": "card__button card__button_reset-input",
+    onClick: _cache[24] || (_cache[24] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+      return $options.clearInput('company');
     }, ["prevent"]))
   }, [_hoisted_18])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
     "class": ["card__text-label", {
@@ -17078,11 +17116,17 @@ var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("
 
 var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "material-icons-outlined md-24"
-}, "edit", -1
+}, "delete", -1
 /* HOISTED */
 );
 
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+  "class": "material-icons-outlined md-24"
+}, "edit", -1
+/* HOISTED */
+);
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "material-icons-outlined md-24"
 }, "content_copy", -1
 /* HOISTED */
@@ -17093,18 +17137,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "toolbar__btn toolbar__btn-delete",
     onClick: _cache[1] || (_cache[1] = function () {
       return $options.onPermitDelete && $options.onPermitDelete.apply($options, arguments);
-    })
-  }, [_hoisted_2]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+    }),
+    disabled: $props.disabled,
+    title: "Удалить из базы данных без возможности восстановления"
+  }, [_hoisted_2], 8
+  /* PROPS */
+  , ["disabled"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+    "class": "toolbar__btn toolbar__btn-expire",
+    onClick: _cache[2] || (_cache[2] = function () {
+      return $options.onPermitExpire && $options.onPermitExpire.apply($options, arguments);
+    }),
+    disabled: $props.disabled,
+    title: "Сделать срок действия пропуска истёкшим"
+  }, [_hoisted_3], 8
+  /* PROPS */
+  , ["disabled"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "toolbar__btn toolbar__btn-edit",
-    onClick: _cache[2] || (_cache[2] = function ($event) {
-      return _ctx.editPermit($props.permit);
-    })
-  }, [_hoisted_3]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
-    "class": "toolbar__btn toolbar__btn-copy",
     onClick: _cache[3] || (_cache[3] = function ($event) {
+      return _ctx.editPermit($props.permit);
+    }),
+    disabled: $props.disabled,
+    title: "Отредактировать пропуск"
+  }, [_hoisted_4], 8
+  /* PROPS */
+  , ["disabled"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+    "class": "toolbar__btn toolbar__btn-copy",
+    onClick: _cache[4] || (_cache[4] = function ($event) {
       return _ctx.copyPermit($props.permit);
-    })
-  }, [_hoisted_4])]);
+    }),
+    title: "Создать новый пропуск на основе текущего"
+  }, [_hoisted_5])]);
 }
 
 /***/ }),
@@ -17147,8 +17209,8 @@ __webpack_require__.r(__webpack_exports__);
     editing: false,
     newPermitActionPath: {
       // store path by default
-      path: 'api/permits',
-      method: 'POST'
+      path: "api/permits",
+      method: "POST"
     },
     storedPermits: [],
     newPermit: {
@@ -17169,21 +17231,21 @@ __webpack_require__.r(__webpack_exports__);
       state.newPermit = {
         id: null,
         number: null,
-        surname: 'Иванов',
-        forename: 'Иван',
-        patronymic: 'Иванович',
-        company: 'ООО Рога и Копыта',
-        position: 'Ведущий специалист',
-        dateStart: '20.08.2021',
-        dateEnd: '15.08.2021'
+        surname: "Иванов",
+        forename: "Иван",
+        patronymic: "Иванович",
+        company: "ООО Рога и Копыта",
+        position: "Ведущий специалист",
+        dateStart: "20.08.2021",
+        dateEnd: "15.08.2021"
       };
-      this.commit('permit/setNextPermitNumber', payload);
+      this.commit("permit/setNextPermitNumber", payload);
     },
     setNewPermit: function setNewPermit(state, payload) {
       var formatDate = function formatDate(dateString) {
         var date = new Date(dateString);
-        var day = String(date.getDate()).padStart(2, '0');
-        var month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zero based, that's why +1 needed
+        var day = String(date.getDate()).padStart(2, "0");
+        var month = String(date.getMonth() + 1).padStart(2, "0"); // month number is an index number which is zero based, that's why +1 needed
 
         var year = date.getFullYear();
         return "".concat(day, ".").concat(month, ".").concat(year);
@@ -17201,19 +17263,19 @@ __webpack_require__.r(__webpack_exports__);
     },
     editPermit: function editPermit(state, payload) {
       state.newPermitActionPath.path = "api/permits/".concat(payload.id);
-      state.newPermitActionPath.method = 'PUT';
-      this.commit('permit/setNewPermit', payload);
+      state.newPermitActionPath.method = "PUT";
+      this.commit("permit/setNewPermit", payload);
       state.editing = true;
     },
     copyPermit: function copyPermit(state, payload) {
-      this.commit('permit/setNewPermit', payload);
-      this.commit('permit/setNextPermitNumber');
+      this.commit("permit/setNewPermit", payload);
+      this.commit("permit/setNextPermitNumber");
       state.newPermit.dateStart = null;
       state.newPermit.dateEnd = null;
     },
     resetNewPermit: function resetNewPermit(state, payload) {
-      state.newPermitActionPath.path = 'api/permits';
-      state.newPermitActionPath.method = 'POST';
+      state.newPermitActionPath.path = "api/permits";
+      state.newPermitActionPath.method = "POST";
       state.newPermit = {
         id: null,
         number: null,
@@ -17258,10 +17320,32 @@ __webpack_require__.r(__webpack_exports__);
         console.log(err);
       });
     },
-    deletePermit: function deletePermit(state, payload) {
+    expirePermit: function expirePermit(state, payload) {
       var _this = this;
 
-      console.log(payload);
+      var res = fetch("api/permits/expire/".concat(payload), {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      }).then(function (response) {
+        return response.json();
+      }).then(function (res) {
+        _this.commit("permit/populatePermits");
+
+        _this.commit("permit/resetNewPermit");
+
+        _this.commit("permit/setNextPermitNumber");
+
+        return res; // res is an array of objects, where each object contain permit data
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    deletePermit: function deletePermit(state, payload) {
+      var _this2 = this;
+
       var res = fetch("api/permits/".concat(payload), {
         method: "DELETE",
         headers: {
@@ -17271,10 +17355,11 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
-        // state.storedPermits = res;
-        console.log(res);
+        _this2.commit("permit/populatePermits");
 
-        _this.commit('permit/populatePermits');
+        _this2.commit("permit/resetNewPermit");
+
+        _this2.commit("permit/setNextPermitNumber");
 
         return res; // res is an array of objects, where each object contain permit data
       })["catch"](function (err) {
@@ -17413,7 +17498,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n}\n.log__title {\n  padding: 10px 0;\n}\n.log__table {\n  width: 100%;\n  max-width: 90%;\n  border-collapse: collapse;\n}\n.log__trh {\n  background-color: honeydew;\n}\n.log__trh:hover {\n  background-color: rgb(227, 255, 227);\n}\n.log__th {\n  padding: 11px 0;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n}\n.log__tr {\n  padding: 10px 0;\n  background-color: lightyellow;\n}\n.log__tr .toolbar {\n  opacity: 0;\n  visibility: hidden;\n}\n.log__tr:hover .toolbar {\n  opacity: 1;\n  visibility: visible;\n}\n.log__tr:hover {\n  background-color: lemonchiffon;\n}\n.log__td {\n  position: relative;\n  padding: 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n}\n@media screen and (max-width: 1420px) {\n.log__table {\n    max-width: 98%;\n}\n}\n@media screen and (min-width: 2000px) {\n.log__table {\n    max-width: 70%;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n}\n.log__title {\n  padding: 10px 0;\n}\n.log__table {\n  width: 100%;\n  max-width: 90%;\n  border-collapse: collapse;\n}\n.log__trh {\n  background-color: honeydew;\n}\n.log__trh:hover {\n  background-color: rgb(227, 255, 227);\n}\n.log__th {\n  padding: 11px 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n  border-left: 0;\n  border-right: 0;\n  text-align: left;\n}\n.log__tr {\n  padding: 10px 0;\n  background-color: lightyellow;\n}\n.log__tr .toolbar {\n  opacity: 0;\n  visibility: hidden;\n}\n.log__tr:hover .toolbar {\n  opacity: 1;\n  visibility: visible;\n}\n.log__tr:hover {\n  background-color: lemonchiffon;\n}\n.log__tr_upcoming {\n  color: dimgrey;\n}\n.log__tr_expired {\n  background-color: rgb(248, 248, 248, .3);\n  color: #da261d8f;\n}\n.log__tr_expired:hover {\n  background-color: rgb(248, 248, 248);\n}\n.log__td {\n  position: relative;\n  padding: 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n  border-left: 0;\n  border-right: 0;\n}\n@media screen and (max-width: 1420px) {\n.log__table {\n    max-width: 98%;\n}\n}\n@media screen and (min-width: 2000px) {\n.log__table {\n    max-width: 70%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -17491,7 +17576,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.toolbar {\n  position: absolute;\n  top: 2px;\n  right: 2px;\n\n  display: grid;\n  grid-auto-flow: column;\n  justify-items: center;\n  align-items: center;\n  gap: 5px;\n}\n.toolbar__btn {\n  width: 40px;\n  height: 35px;\n  background-color: rgba(250, 240, 230, 0.85);\n  border-radius: 4px;\n  border: none;\n  box-shadow: 0px 0px 2px rgba(0, 0, 0, .2);\n\n  display: grid;\n  justify-items: center;\n  align-items: center;\n  justify-content: center;\n\n  transition: all .15s ease-in-out;\n}\n.toolbar__btn:hover {\n  cursor: pointer;\n  color: #fff;\n}\n.toolbar__btn-delete {\n  color: #da251d;\n  border: 1px solid #da251d;\n}\n.toolbar__btn-delete:hover {\n  background: #da251d;\n}\n.toolbar__btn-edit {\n  color: coral;\n  border: 1px solid coral;\n}\n.toolbar__btn-edit:hover {\n  background: coral;\n}\n.toolbar__btn-copy {\n  color: #28a745;\n  border: 1px solid #28a745;\n}\n.toolbar__btn-copy:hover {\n  background: #28a745;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.toolbar {\n  position: absolute;\n  top: 2px;\n  right: 2px;\n\n  display: grid;\n  grid-auto-flow: column;\n  justify-items: center;\n  align-items: center;\n  gap: 5px;\n}\n.toolbar__btn {\n  width: 40px;\n  height: 35px;\n  background-color: rgba(250, 240, 230, 0.85);\n  border-radius: 4px;\n  border: none;\n  box-shadow: 0px 0px 2px rgba(0, 0, 0, .2);\n\n  display: grid;\n  justify-items: center;\n  align-items: center;\n  justify-content: center;\n\n  transition: all .15s ease-in-out;\n}\n.toolbar__btn:hover {\n  cursor: pointer;\n  color: #fff;\n}\n.toolbar__btn:disabled {\n  color: darkgray;\n  border: 1px solid darkgray;\n}\n.toolbar__btn:disabled:hover {\n  color: darkgray;\n  cursor: default;\n  background-color: rgba(250, 240, 230, 0.85);\n}\n.toolbar__btn-delete {\n  color: #da251d;\n  border: 1px solid #da251d;\n}\n.toolbar__btn-delete:hover {\n  background: #da251d;\n}\n.toolbar__btn-expire {\n  color: slategray;\n  border: 1px solid slategray;\n}\n.toolbar__btn-expire:hover {\n  background: slategray;\n}\n.toolbar__btn-edit {\n  color: coral;\n  border: 1px solid coral;\n}\n.toolbar__btn-edit:hover {\n  background: coral;\n}\n.toolbar__btn-copy {\n  color: #28a745;\n  border: 1px solid #28a745;\n}\n.toolbar__btn-copy:hover {\n  background: #28a745;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

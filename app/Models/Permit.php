@@ -18,16 +18,13 @@ class Permit extends Model {
   }
 
 
-  public static function store($request, $data) {
-    $dateStart =  date_format(date_create_from_format('d.m.Y H:i:s', $request['dateStart'] . ' 00:00:00'), 'Y-m-d H:i:s');
-    $dateEnd = date_format(date_create_from_format('d.m.Y H:i:s', $request['dateEnd'] . ' 23:59:59'), 'Y-m-d H:i:s');
-
+  public static function store($request, $permitData) {
     $sql = [
-      'people_id' => $data['person']->id,
-      'companies_id' => $data['company']->id,
+      'people_id' => $permitData['person']->id,
+      'companies_id' => $permitData['company']->id,
       'number' => $request['number'],
-      'start' => $dateStart,
-      'end' => $dateEnd
+      'start' => $request['dateStart'],
+      'end' => $request['dateEnd']
     ];
 
     return self::firstOrCreate($sql);

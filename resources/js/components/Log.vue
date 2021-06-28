@@ -8,26 +8,28 @@
         <th class="log__th">Фамилия</th>
         <th class="log__th">Имя</th>
         <th class="log__th">Отчество</th>
-        <th class="log__th">Компания</th>
         <th class="log__th">Должность</th>
+        <th class="log__th">Компания</th>
         <th class="log__th">Действует с</th>
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id">
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd }">
         <td class="log__td">{{ permit.number }}</td>
         <td class="log__td">{{ permit.surname }}</td>
         <td class="log__td">{{ permit.forename }}</td>
         <td class="log__td">{{ permit.patronymic }}</td>
-        <td class="log__td">{{ permit.company }}</td>
         <td class="log__td">{{ permit.position }}</td>
+        <td class="log__td">{{ permit.company }}</td>
         <td class="log__td">{{ formatDate(permit.dateStart) }}</td>
         <td class="log__td">
           {{ formatDate(permit.dateEnd) }}
-          <Toolbar v-bind:permit="permit"/>
+          <Toolbar v-bind:permit="permit" v-bind:disabled="curTime > permit.dateEnd"/>
         </td>
       </tr>
     </table>
+
+    <h4>{{ curTime }}</h4>
   </section>
 </template>
 
@@ -40,6 +42,12 @@ export default {
     Toolbar,
   },
 
+  data() {
+    return {
+      curTime: null
+    }
+  },
+
   methods: {
     formatDate(dateString) {
       let date = new Date(dateString);
@@ -49,11 +57,29 @@ export default {
 
       return `${day}.${month}.${year}`;
     },
+
+    getCurrentDateTime() {
+      let date = new Date();
+
+      let day = String(date.getDate()).padStart(2, '0');
+      let month = String(date.getMonth() + 1).padStart(2, '0'); // month number is an index number which is zero based, that's why +1 needed
+      let year = date.getFullYear();
+
+      let hour = String(date.getHours()).padStart(2, '0');
+      let minute = String(date.getMinutes()).padStart(2, '0');
+      let second = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    }
   },
 
   computed: {
     ...mapState({ storedPermits: state => state.permit.storedPermits }),
   },
+
+  created() {
+    setInterval(() => { this.curTime = this.getCurrentDateTime(); }, 1000);
+  }
 
 };
 </script>
@@ -84,11 +110,14 @@ export default {
 }
 
 .log__th {
-  padding: 11px 0;
+  padding: 11px 10px;
   border: 1px solid #ccc;
   font-size: 16px;
   line-height: 1.2;
   font-weight: 400;
+  border-left: 0;
+  border-right: 0;
+  text-align: left;
 }
 
 .log__tr {
@@ -110,6 +139,19 @@ export default {
   background-color: lemonchiffon;
 }
 
+.log__tr_upcoming {
+  color: dimgrey;
+}
+
+.log__tr_expired {
+  background-color: rgb(248, 248, 248, .3);
+  color: #da261d8f;
+}
+
+.log__tr_expired:hover {
+  background-color: rgb(248, 248, 248);
+}
+
 .log__td {
   position: relative;
   padding: 10px;
@@ -117,6 +159,8 @@ export default {
   font-size: 16px;
   line-height: 1.2;
   font-weight: 300;
+  border-left: 0;
+  border-right: 0;
 }
 
 @media screen and (max-width: 1420px) {

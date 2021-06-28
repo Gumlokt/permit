@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Log;
+// Log::debug('text');
+
 
 use App\Models\Company;
 use App\Models\Permit;
@@ -11,7 +14,7 @@ use App\Models\Person;
 
 
 class PermitController extends Controller {
-  public $data = [];
+  public $permitData = [];
 
   public function index() {
     $permits = DB::table('permits')
@@ -20,11 +23,13 @@ class PermitController extends Controller {
       ->select(
         'permits.id',
         'permits.number',
+
         'people.surname',
         'people.forename',
         'people.patronymic',
-        'companies.name as company',
         'people.position',
+
+        'companies.name as company',
 
         'permits.start as dateStart',
         'permits.end as dateEnd'
@@ -53,26 +58,38 @@ class PermitController extends Controller {
       'surname' => 'required',
       'forename' => 'required',
       'patronymic' => 'required',
-      'company' => 'required',
       'position' => 'required',
+      'company' => 'required',
       'dateStart' => 'required|date_format:d.m.Y',
       'dateEnd' => 'required|date_format:d.m.Y',
     ]);
 
+    $clearedInputs = $this->clearSpaces($request->all()); // array of cleared user inputs
+
+    $clearedInputs['dateStart'] = $this->handleDateStart($clearedInputs['dateStart']); // now dates are converted from 'd.m.Y' format to 'Y-m-d H:i:s' and can be safely compared
+    $clearedInputs['dateEnd'] = $this->handleDateEnd($clearedInputs['dateEnd']);
+
     // dateStart can not be older then dateEnd
-    if($this->handleDateStart($request->input('dateStart')) > $this->handleDateEnd($request->input('dateEnd'))) {
+    if($clearedInputs['dateStart'] > $clearedInputs['dateEnd']) {
       return response()->json([
         'error' => true,
         'message' => 'Дата начала действия пропуска не может быть позднее даты окончания действия пропуска.',
       ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
     }
 
-    $clearedInputs = $this->clearSpaces($request->all());
+    // Get permits with the same data, except for the permit number and dates, if they are exist
+    $duplicatePermit = $this->checkDuplication($clearedInputs);
+    if($duplicatePermit) {
+      return response()->json([
+        'error' => true,
+        'message' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' с такими же введёнными значениями, у которого дата окончания дейстия позже даты начала действия вновь вводимого пропуска.',
+      ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+    }
 
-    $this->data['company'] = Company::store($clearedInputs);
-    $this->data['person'] = Person::store($clearedInputs);
+    $this->permitData['company'] = Company::store($clearedInputs);
+    $this->permitData['person'] = Person::store($clearedInputs);
 
-    return Permit::store($clearedInputs, $this->data);
+    return Permit::store($clearedInputs, $this->permitData);
   }
 
 
@@ -88,14 +105,26 @@ class PermitController extends Controller {
       'dateEnd' => 'required|date_format:d.m.Y',
     ]);
 
-    if($this->handleDateStart($request->input('dateStart')) > $this->handleDateEnd($request->input('dateEnd'))) {
+    $clearedInputs = $this->clearSpaces($request->all()); // array of cleared user inputs
+
+    $clearedInputs['dateStart'] = $this->handleDateStart($clearedInputs['dateStart']); // now dates are converted from 'd.m.Y' format to 'Y-m-d H:i:s' and can be safely compared
+    $clearedInputs['dateEnd'] = $this->handleDateEnd($clearedInputs['dateEnd']);
+
+    if($clearedInputs['dateStart'] > $clearedInputs['dateEnd']) {
       return response()->json([
         'error' => true,
         'message' => 'Дата начала действия пропуска не может быть позднее даты окончания действия пропуска.',
       ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
     }
 
-    $clearedInputs = $this->clearSpaces($request->all()); // array of cleared user inputs
+    // Get permits with the same data, except for the permit number and dates, if they are exist
+    $duplicatePermit = $this->checkDuplication($clearedInputs, $id);
+    if($duplicatePermit) {
+      return response()->json([
+        'error' => true,
+        'message' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' с такими же введёнными значениями, у которого дата окончания дейстия позже даты начала действия вновь вводимого пропуска.',
+      ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+    }
 
     $permit = Permit::find($id);
 
@@ -103,8 +132,8 @@ class PermitController extends Controller {
       'people_id' => $permit->people_id,
       'companies_id' => $permit->companies_id,
       'number' => $clearedInputs['number'],
-      'start' => $this->handleDateStart($clearedInputs['dateStart']),
-      'end' => $this->handleDateEnd($clearedInputs['dateEnd']),
+      'start' => $clearedInputs['dateStart'],
+      'end' => $clearedInputs['dateEnd'],
     ];
 
     // разберемся с компанией
@@ -174,6 +203,15 @@ class PermitController extends Controller {
   }
 
 
+  public function expire(Request $request, $id) {
+    $permit = Permit::findOrFail($id);
+    $yesterday = date('Y-m-d', time() - 86400) . ' 23:59:59'; // 86 400 sec = 60 sec * 60 min * 24 hour
+    $permit->update(['end' => $yesterday]);
+
+    return $permit;
+  }
+
+
   public function delete(Request $request, $id) {
     $permit = Permit::findOrFail($id);
     $permit->delete();
@@ -195,5 +233,41 @@ class PermitController extends Controller {
     if (!$anotherPermit) {
       Person::destroy($deletedPermit->companies_id);
     }
+  }
+
+
+  public function checkDuplication($clearedInputs, $id = 0) { // second argument is needed only on update operation
+    $duplicatePermit = DB::table('permits')
+      ->join('companies', 'permits.companies_id', '=', 'companies.id')
+      ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.id',
+        'permits.number',
+
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'people.position',
+
+        'companies.name as company',
+
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
+      )
+      ->where('people.surname', '=', $clearedInputs['surname'])
+      ->where('people.forename', '=', $clearedInputs['forename'])
+      ->where('people.patronymic', '=', $clearedInputs['patronymic'])
+      ->where('people.position', '=', $clearedInputs['position'])
+      ->where('companies.name', '=', $clearedInputs['company'])
+      ->where('permits.end', '>=', $clearedInputs['dateStart'])
+      ->where(function($query) use ($id) {
+        if ($id) {
+          return $query->where('permits.id', '!=', $id);
+        }
+      })
+      ->orderByDesc('permits.id')
+      ->first();
+
+    return $duplicatePermit;
   }
 }

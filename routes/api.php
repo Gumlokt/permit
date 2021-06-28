@@ -28,4 +28,5 @@ Route::get('permits/last', [ PermitController::class, 'last' ]); // get last per
 Route::get('permits/{id}', [ PermitController::class, 'show' ]); // get one permit by id
 Route::post('permits', [ PermitController::class, 'store' ]); // store one permit
 Route::put('permits/{id}', [ PermitController::class, 'update' ]); // update one permit by id
+Route::delete('permits/expire/{id}', [ PermitController::class, 'expire' ]); // make the permit expired (by id)
 Route::delete('permits/{id}', [ PermitController::class, 'delete' ]); // delete one permit by id

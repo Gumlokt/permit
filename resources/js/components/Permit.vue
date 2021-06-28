@@ -32,15 +32,15 @@
 
         <fieldset class="card__fieldset">
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.company || focuses.company }" for="company">Компания</label>
-            <input type="text" name="company" class="card__text-input" v-model="newPermit.company" @focus="focuses.company = true" @blur="focuses.company = false" ref="company">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('company')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
-
-          <div class="card__text-field">
             <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.position || focuses.position }" for="position">Должность</label>
             <input type="text" name="position" class="card__text-input" v-model="newPermit.position" @focus="focuses.position = true" @blur="focuses.position = false" ref="position" id="position">
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('position')"><span class="material-icons material-icons-outlined">clear</span></button>
+          </div>
+
+          <div class="card__text-field">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.company || focuses.company }" for="company">Компания</label>
+            <input type="text" name="company" class="card__text-input" v-model="newPermit.company" @focus="focuses.company = true" @blur="focuses.company = false" ref="company">
+            <button class="card__button card__button_reset-input" @click.prevent="clearInput('company')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
@@ -112,7 +112,6 @@ export default {
         body: JSON.stringify(this.newPermit),
       })
       .then((response) => {
-         console.log(response.status);
         return response.json();
       })
       .then((res) => {
@@ -135,8 +134,7 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-
-      console.log('saved...');
+      // console.log('saved...');
     },
 
     getPermits() { // temporary method for development cases
