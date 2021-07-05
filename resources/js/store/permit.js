@@ -91,8 +91,17 @@ export default {
       };
     },
 
-    setNextPermitNumber(state) {
-      const res = fetch(`api/permits/last`, {
+    setNextPermitNumber(state, payload) {
+      let currentYear = new Date().getFullYear();
+
+      if (payload) {
+        currentYear = payload;
+      }
+
+      console.log(currentYear);
+      // currentYear = 2019;
+
+      const res = fetch(`api/permits/last/${currentYear}`, {
         method: "GET",
         headers: {
           Accept: "application/json",

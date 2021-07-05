@@ -17,7 +17,7 @@ export default {
       required: true,
     },
     disabled: {
-      type: Blob,
+      type: Boolean,
       required: true
     }
   },

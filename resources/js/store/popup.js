@@ -3,7 +3,10 @@ export default {
 
   state: {
     popupOpened: false,
-    popupMessage: null
+    popupMessage: {
+      problem: null,
+      solution: null,
+    },
   },
 
   mutations: {
@@ -13,15 +16,17 @@ export default {
 
     closePopup(state, payload) {
       state.popupOpened = false;
-      this.commit('popup/resetPopupMessage');
+      this.commit("popup/resetPopupMessage");
     },
 
     setPopupMessage(state, payload) {
-      state.popupMessage = payload;
+      state.popupMessage.problem = payload.problem;
+      state.popupMessage.solution = payload.solution;
     },
 
     resetPopupMessage(state, payload) {
-      state.popupMessage = null;
+      state.popupMessage.problem = null;
+      state.popupMessage.solution = null;
     },
-  }
-}
+  },
+};

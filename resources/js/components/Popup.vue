@@ -8,7 +8,8 @@
       </div>
 
       <div class="popup__body">
-        <p class="popup__message">{{ popupMessage }}</p>
+        <p class="popup__message popup__message_problem">{{ popupMessage.problem }}</p>
+        <p class="popup__message popup__message_solution">{{ popupMessage.solution }}</p>
       </div>
 
       <div class="popup__footer">Some stuff</div>
@@ -121,12 +122,24 @@ export default {
 
 .popup__body {
   padding: 20px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .popup__message {
   font-size: 18px;
   line-height: 1.2;
   font-weight: 300;
+}
+
+.popup__message_problem {
+  color: #da251d;
+}
+
+.popup__message_solution {
+  color: darkslategray;
 }
 
 .popup__footer {

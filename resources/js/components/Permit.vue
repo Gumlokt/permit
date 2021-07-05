@@ -116,13 +116,13 @@ export default {
       })
       .then((res) => {
         if(res.error) {
-          this.setPopupMessage(res.message);
+          this.setPopupMessage(res);
           this.openPopup();
           return;
         }
 
         if(res.errors) {
-          this.setPopupMessage(`Похоже, что водимымые данные содержат ошибку. Если после исправления ввода данных ошибка не исчезнет, обратитесь  за помощью к разработчику приложения. [ ${res.message} ]`);
+          this.setPopupMessage({ problem: `Похоже, что водимымые данные содержат не известную ошибку. [ ${res.message} ]`, solution: 'Попробуйте исправить вводимые данные. Если после этого ошибка не исчезнет, обратитесь  за помощью к разработчику приложения.' });
           this.openPopup();
           return;
         }
@@ -304,8 +304,8 @@ export default {
 .card__button_reset-input {
   margin: 0 0 0 5px;
   padding: 0;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border: 0;
 
   background: #fff;
@@ -315,6 +315,11 @@ export default {
   opacity: 0;
   visibility: hidden;
   border-radius: 50%;
+
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
 
   transition: all .5s ease-in-out;
 }
