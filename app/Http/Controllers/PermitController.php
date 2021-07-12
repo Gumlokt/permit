@@ -336,28 +336,13 @@ class PermitController extends Controller {
     }
 
     // max count of not expired permits must be 2 or less
-    $validPermitsCount = $duplicatePermit = DB::table('permits')
+    $validPermitsCount = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
-      ->select(
-        'permits.id',
-        'permits.number',
-
-        'people.surname',
-        'people.forename',
-        'people.patronymic',
-        'people.position',
-
-        'companies.name as company',
-
-        'permits.start as dateStart',
-        'permits.end as dateEnd'
-      )
       ->where('people.surname', '=', $clearedInputs['surname'])
       ->where('people.forename', '=', $clearedInputs['forename'])
       ->where('people.patronymic', '=', $clearedInputs['patronymic'])
       ->where('people.position', '=', $clearedInputs['position'])
-
       ->where('companies.name', '=', $clearedInputs['company'])
       ->where('permits.end', '>=', $currentDate) // select valid (not expired) permits
       ->where(function($query) use ($id) {
@@ -379,24 +364,63 @@ class PermitController extends Controller {
       ];
     }
 
+    // relevant only for update() action
+    // relevant only for updating an existing permit, as long as there is another registered permit with the same data and validity period in the future
+    if ($id) {
+      $editingPermit = Permit::find($id);
+
+      // find out if there is a permit with the same input data and validity period in the future
+      $duplicatePermit = DB::table('permits')
+        ->join('companies', 'permits.companies_id', '=', 'companies.id')
+        ->join('people', 'permits.people_id', '=', 'people.id')
+        ->select(
+          'permits.id',
+          'permits.number',
+
+          'people.surname',
+          'people.forename',
+          'people.patronymic',
+          'people.position',
+
+          'companies.name as company',
+
+          'permits.start as dateStart',
+          'permits.end as dateEnd'
+        )
+        ->where('people.surname', '=', $clearedInputs['surname'])
+        ->where('people.forename', '=', $clearedInputs['forename'])
+        ->where('people.patronymic', '=', $clearedInputs['patronymic'])
+        ->where('people.position', '=', $clearedInputs['position'])
+        ->where('companies.name', '=', $clearedInputs['company'])
+        ->where('permits.start', '>', $editingPermit->end) // select permit with the validity period in the future
+        ->where(function($query) use ($id) {
+          if ($id) {
+            return $query->where('permits.id', '!=', $id);
+          }
+        })
+        ->orderByDesc('permits.id')
+        ->first();
+
+      if($duplicatePermit) {
+        if($clearedInputs['dateEnd'] > $duplicatePermit->dateStart) {
+          return [
+            'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+            'answer' => [
+              'error' => true,
+              'problem' => 'Произошло пересечение сроков действия редактируемого пропуска с пропуском № ' . $duplicatePermit->number . ', содержащего такие же значения, но с другим сроком дейстия, который начнётся с ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
+              'solution' => 'Для успешного редактирования выбранного пропуска введите дату окончания действия, которая не попадала бы в срок действия ранее зарегистрированного пропуска, у которого срок дейстия наступит в будущем, т.е. дата должна быть ранее, чем ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
+            ]
+          ];
+        }
+      }
+
+      return false;
+    }
+
     // find out if there is a permit with the same input data and not expired validity period
-    $duplicatePermit = $duplicatePermit = DB::table('permits')
+    $duplicatePermit = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
-      ->select(
-        'permits.id',
-        'permits.number',
-
-        'people.surname',
-        'people.forename',
-        'people.patronymic',
-        'people.position',
-
-        'companies.name as company',
-
-        'permits.start as dateStart',
-        'permits.end as dateEnd'
-      )
       ->where('people.surname', '=', $clearedInputs['surname'])
       ->where('people.forename', '=', $clearedInputs['forename'])
       ->where('people.patronymic', '=', $clearedInputs['patronymic'])
@@ -423,24 +447,10 @@ class PermitController extends Controller {
     }
 
     // relevant only for store() action
-    // find out if there is a permit with the same input data that has a start date later than the current date
-    $duplicatePermit = $duplicatePermit = DB::table('permits')
+    // find out if there is a permit with the same input data and has a start date later than the current date
+    $duplicatePermit = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
-      ->select(
-        'permits.id',
-        'permits.number',
-
-        'people.surname',
-        'people.forename',
-        'people.patronymic',
-        'people.position',
-
-        'companies.name as company',
-
-        'permits.start as dateStart',
-        'permits.end as dateEnd'
-      )
       ->where('people.surname', '=', $clearedInputs['surname'])
       ->where('people.forename', '=', $clearedInputs['forename'])
       ->where('people.patronymic', '=', $clearedInputs['patronymic'])
@@ -462,7 +472,7 @@ class PermitController extends Controller {
         'answer' => [
           'error' => true,
           'problem' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' на указанное лицо и организацию, у которого дата начала дейстия ещё не наступила.',
-          'solution' => 'Вместо создания ещё одного пропуска на будущий период, задайте корректный срок действия зарегистрированного ранее пропуска № ' . $duplicatePermit->number . '.',
+          'solution' => 'Вместо создания ещё одного пропуска на будущий период, отредактируйте срок действия зарегистрированного ранее и ещё не вступившего в действие пропуска № ' . $duplicatePermit->number . ', задав ему нужный вам период.',
         ]
       ];
     }
