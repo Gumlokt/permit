@@ -36,7 +36,8 @@ export default {
         dateStart: "20.08.2021",
         dateEnd: "15.08.2021",
       };
-      this.commit("permit/setNextPermitNumber", payload);
+      // console.log(payload);
+      this.commit("permit/setNextPermitNumber", 2021);
     },
 
     setNewPermit(state, payload) {

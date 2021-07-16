@@ -17443,8 +17443,9 @@ __webpack_require__.r(__webpack_exports__);
         position: "Ведущий специалист",
         dateStart: "20.08.2021",
         dateEnd: "15.08.2021"
-      };
-      this.commit("permit/setNextPermitNumber", payload);
+      }; // console.log(payload);
+
+      this.commit("permit/setNextPermitNumber", 2021);
     },
     setNewPermit: function setNewPermit(state, payload) {
       var formatDate = function formatDate(dateString) {
@@ -17716,7 +17717,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n}\n.log__title {\n  padding: 10px 0;\n}\n.log__table {\n  width: 100%;\n  max-width: 90%;\n  border-collapse: collapse;\n}\n.log__trh {\n  background-color: honeydew;\n}\n.log__trh:hover {\n  background-color: rgb(227, 255, 227);\n}\n.log__th {\n  padding: 11px 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n  border-left: 0;\n  border-right: 0;\n  text-align: left;\n}\n.log__tr {\n  padding: 10px 0;\n  background-color: lightyellow;\n}\n.log__tr .toolbar {\n  opacity: 0;\n  visibility: hidden;\n}\n.log__tr:hover .toolbar {\n  opacity: 1;\n  visibility: visible;\n}\n.log__tr:hover {\n  background-color: lemonchiffon;\n}\n.log__tr_upcoming {\n  color: dimgrey;\n}\n.log__tr_expired {\n  background-color: rgb(248, 248, 248, .3);\n  color: #da261d8f;\n}\n.log__tr_expired:hover {\n  background-color: rgb(248, 248, 248);\n}\n.log__td {\n  position: relative;\n  padding: 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n  border-left: 0;\n  border-right: 0;\n}\n@media screen and (max-width: 1420px) {\n.log__table {\n    max-width: 98%;\n}\n}\n@media screen and (min-width: 2000px) {\n.log__table {\n    max-width: 70%;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.log {\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n}\n.log__title {\n  padding: 10px 0;\n}\n.log__table {\n  width: 100%;\n  max-width: 90%;\n  border-collapse: collapse;\n}\n.log__trh {\n  background-color: honeydew;\n}\n.log__trh:hover {\n  background-color: rgb(227, 255, 227);\n}\n.log__th {\n  padding: 11px 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 400;\n  border-left: 0;\n  border-right: 0;\n  text-align: left;\n}\n.log__tr {\n  padding: 10px 0;\n  color: #009c24;\n  background-color: lightyellow;\n}\n.log__tr .toolbar {\n  opacity: 0;\n  visibility: hidden;\n}\n.log__tr:hover .toolbar {\n  opacity: 1;\n  visibility: visible;\n}\n.log__tr:hover {\n  background-color: lemonchiffon;\n}\n.log__tr_upcoming {\n  color: rgba(255, 102, 14, 0.822);\n}\n.log__tr_expired {\n  background-color: rgb(248, 248, 248, .3);\n  color: #da261d5b;\n}\n.log__tr_expired:hover {\n  background-color: rgb(248, 248, 248);\n}\n.log__td {\n  position: relative;\n  padding: 10px;\n  border: 1px solid #ccc;\n  font-size: 16px;\n  line-height: 1.2;\n  font-weight: 300;\n  border-left: 0;\n  border-right: 0;\n}\n@media screen and (max-width: 1420px) {\n.log__table {\n    max-width: 98%;\n}\n}\n@media screen and (min-width: 2000px) {\n.log__table {\n    max-width: 70%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

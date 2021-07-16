@@ -122,6 +122,7 @@ export default {
 
 .log__tr {
   padding: 10px 0;
+  color: #009c24;
   background-color: lightyellow;
 }
 
@@ -140,12 +141,12 @@ export default {
 }
 
 .log__tr_upcoming {
-  color: dimgrey;
+  color: rgba(255, 102, 14, 0.822);
 }
 
 .log__tr_expired {
   background-color: rgb(248, 248, 248, .3);
-  color: #da261d8f;
+  color: #da261d5b;
 }
 
 .log__tr_expired:hover {
