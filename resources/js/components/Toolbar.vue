@@ -5,12 +5,19 @@
     <button class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)" v-bind:disabled="disabled" title="Отредактировать пропуск"><span class="material-icons-outlined md-24">edit</span></button>
     <button class="toolbar__btn toolbar__btn-copy" @click="copyPermit(permit)" title="Создать новый пропуск на основе текущего"><span class="material-icons-outlined md-24">content_copy</span></button>
   </div>
+  <!-- <Popup /> -->
 </template>
 
 <script>
 import { mapMutations } from "vuex";
 
+import Popup from "./Popup";
+
 export default {
+  components: {
+    Popup,
+  },
+
   props: {
     permit: {
       type: Object,
@@ -27,8 +34,11 @@ export default {
     ...mapMutations('permit', ['expirePermit']),
     ...mapMutations('permit', ['editPermit']),
     ...mapMutations('permit', ['copyPermit']),
+    ...mapMutations('popup', ['openPopup']),
 
     onPermitDelete() {
+      this.openPopup;
+
       if (confirm(`Вы дейстительно желаете удалить пропуск № ${this.permit.number} из базы данных без возможности восстановления?`)) {
         this.deletePermit(this.permit.id);
       }

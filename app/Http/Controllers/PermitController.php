@@ -78,28 +78,13 @@ class PermitController extends Controller {
     $clearedInputs['dateEnd'] = $this->handleDateEnd($clearedInputs['dateEnd']);
 
     // // dateStart can not be older then dateEnd
-    // if($clearedInputs['dateStart'] > $clearedInputs['dateEnd']) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'Дата начала действия вновь вводимого пропуска позднее даты окончания действия.',
-    //     'solution' => 'Исправьте срок действия вновь вводимого пропуска.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
     $res = $this->checkErrorsOfPermitDates($clearedInputs);
 
     if ($res) {
       return response()->json($res['answer'], $res['statusCode']);
     }
 
-    // $currentDate = date('Y-m-d') . ' 00:00:00';
-    // // dateEnd can not be older then currentDate
-    // if($currentDate > $clearedInputs['dateEnd']) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'Запрещён ввод заведомо истёкших пропусков.',
-    //     'solution' => 'Исправьте дату окончания действия вновь вводимого пропуска на текущую либо более позднюю.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
+
 
     // Get permits with the same data, except for the permit number and dates, if they are exist
 
@@ -284,6 +269,7 @@ class PermitController extends Controller {
 
 
 
+  // helper function for checking the correctness of dates
   // Delete unused companies and persons from DB if they are exist
   private function checkErrorsOfPermitDates($clearedInputs, $id = 0) { // second argument is needed only on update operation
     // dateStart can not be older then dateEnd
@@ -298,7 +284,7 @@ class PermitController extends Controller {
       ];
     }
 
-    // dateEnd can not be older then currentDate
+    // currentDate can not be older then dateEnd
     $currentDate = date('Y-m-d') . ' 00:00:00';
     if($currentDate > $clearedInputs['dateEnd']) {
       return [
@@ -358,99 +344,31 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'В базе данных уже зарегистрированы два пропуска с такими же введёнными значениями и лишь разными, но ещё не истёкшими сроками действия.',
+          'problem' => 'Защита от создания дубликатов! В базе данных уже зарегистрированы 2 пропуска с такими же значениями и ещё не истёкшими сроками действия.',
           'solution' => 'Проверьте правильность ввода данных, вероятно, вы собирались оформить пропуск на другое лицо или организацию.',
         ]
       ];
     }
 
-    // relevant only for update() action
-    // relevant only for updating an existing permit, as long as there is another registered permit with the same data and validity period in the future
-    if ($id) {
-      $editingPermit = Permit::find($id);
-
-      // find out if there is a permit with the same input data and validity period in the future
-      $duplicatePermit = DB::table('permits')
-        ->join('companies', 'permits.companies_id', '=', 'companies.id')
-        ->join('people', 'permits.people_id', '=', 'people.id')
-        ->select(
-          'permits.id',
-          'permits.number',
-
-          'people.surname',
-          'people.forename',
-          'people.patronymic',
-          'people.position',
-
-          'companies.name as company',
-
-          'permits.start as dateStart',
-          'permits.end as dateEnd'
-        )
-        ->where('people.surname', '=', $clearedInputs['surname'])
-        ->where('people.forename', '=', $clearedInputs['forename'])
-        ->where('people.patronymic', '=', $clearedInputs['patronymic'])
-        ->where('people.position', '=', $clearedInputs['position'])
-        ->where('companies.name', '=', $clearedInputs['company'])
-        ->where('permits.start', '>', $editingPermit->end) // select permit with the validity period in the future
-        ->where(function($query) use ($id) {
-          if ($id) {
-            return $query->where('permits.id', '!=', $id);
-          }
-        })
-        ->orderByDesc('permits.id')
-        ->first();
-
-      if($duplicatePermit) {
-        if($clearedInputs['dateEnd'] > $duplicatePermit->dateStart) {
-          return [
-            'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-            'answer' => [
-              'error' => true,
-              'problem' => 'Произошло пересечение сроков действия редактируемого пропуска с пропуском № ' . $duplicatePermit->number . ', содержащего такие же значения, но с другим сроком дейстия, который начнётся с ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
-              'solution' => 'Для успешного редактирования выбранного пропуска введите дату окончания действия, которая не попадала бы в срок действия ранее зарегистрированного пропуска, у которого срок дейстия наступит в будущем, т.е. дата должна быть ранее, чем ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
-            ]
-          ];
-        }
-      }
-
-      return false;
-    }
-
-    // find out if there is a permit with the same input data and not expired validity period
-    $duplicatePermit = DB::table('permits')
-      ->join('companies', 'permits.companies_id', '=', 'companies.id')
-      ->join('people', 'permits.people_id', '=', 'people.id')
-      ->where('people.surname', '=', $clearedInputs['surname'])
-      ->where('people.forename', '=', $clearedInputs['forename'])
-      ->where('people.patronymic', '=', $clearedInputs['patronymic'])
-      ->where('people.position', '=', $clearedInputs['position'])
-      ->where('companies.name', '=', $clearedInputs['company'])
-      ->where('permits.end', '>=', $clearedInputs['dateStart']) // select valid (not expired) permits
-      ->where(function($query) use ($id) {
-        if ($id) {
-          return $query->where('permits.id', '!=', $id);
-        }
-      })
-      ->orderByDesc('permits.id')
-      ->first();
-
-    if($duplicatePermit) {
-      return [
-        'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-        'answer' => [
-          'error' => true,
-          'problem' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' с такими же введёнными значениями, у которого дата окончания дейстия позже даты начала действия вновь вводимого пропуска.',
-          'solution' => 'Для добавления в базу вновь вводимого пропуска не изменяя его срока действия, необходимо перевести ранее зарегистрированный и до сих пор действующий пропуск № ' . $duplicatePermit->number . ' в разряд истёкших. Либо задайте другой срок действия вновь вводимого пропуска.',
-        ]
-      ];
-    }
-
-    // relevant only for store() action
+    // relevant both for store() and update() actions to check out if there are permit duplicates
     // find out if there is a permit with the same input data and has a start date later than the current date
     $duplicatePermit = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.id',
+        'permits.number',
+
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'people.position',
+
+        'companies.name as company',
+
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
+      )
       ->where('people.surname', '=', $clearedInputs['surname'])
       ->where('people.forename', '=', $clearedInputs['forename'])
       ->where('people.patronymic', '=', $clearedInputs['patronymic'])
@@ -466,55 +384,109 @@ class PermitController extends Controller {
       ->first();
 
     if($duplicatePermit) {
-      Log::debug($duplicatePermit->number);
-      return [
+      // Log::debug('Permit number: ' . $duplicatePermit->number);
+
+      $answer = [
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' на указанное лицо и организацию, у которого дата начала дейстия ещё не наступила.',
-          'solution' => 'Вместо создания ещё одного пропуска на будущий период, отредактируйте срок действия зарегистрированного ранее и ещё не вступившего в действие пропуска № ' . $duplicatePermit->number . ', задав ему нужный вам период.',
+          'problem' => 'Защита от создания дубликатов! В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' на указанное лицо и организацию, у которого дата начала дейстия ещё не наступила.',
+          'solution' => 'Вместо создания ещё одного пропуска, отредактируйте срок действия зарегистрированного ранее и ещё не вступившего в действие пропуска № ' . $duplicatePermit->number . ', задав ему нужный вам период.',
         ]
       ];
+
+      if($id) {
+        if($clearedInputs['dateStart'] > $currentDate) {
+          return $answer;
+        }
+
+        if($clearedInputs['dateEnd'] >= $duplicatePermit->dateStart) {
+          return [
+            'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+            'answer' => [
+              'error' => true,
+              'problem' => 'Произошло пересечение сроков действия редактируемого пропуска с пропуском № ' . $duplicatePermit->number . ', содержащего такие же значения, но с другим сроком дейстия, который начнётся с ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
+              'solution' => 'Задайте период действия пропуска так, чтобы он не пересекался с периодом действия пропуска № ' . $duplicatePermit->number . '.',
+            ]
+          ];
+        }
+
+        if($clearedInputs['number'] > $duplicatePermit->number and $clearedInputs['dateStart'] < $duplicatePermit->dateStart) {
+          return [
+            'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+            'answer' => [
+              'error' => true,
+              'problem' => 'Ошибка хронологии! Для пропуска с более старшим номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать более ранний срок действия, в то время как, в базе есть ранее зарегистрированный пропуск № ' . $duplicatePermit->number . ', у которого срок действия ещё не начался.',
+              'solution' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
+            ]
+          ];
+        }
+      } else {
+        return $answer;
+      }
+    }
+
+
+    // relevant both for store() and update() actions
+    // find out if there is a permit with the same input data and not expired validity period
+    $duplicatePermit = DB::table('permits')
+      ->join('companies', 'permits.companies_id', '=', 'companies.id')
+      ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.id',
+        'permits.number',
+
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'people.position',
+
+        'companies.name as company',
+
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
+      )
+      ->where('people.surname', '=', $clearedInputs['surname'])
+      ->where('people.forename', '=', $clearedInputs['forename'])
+      ->where('people.patronymic', '=', $clearedInputs['patronymic'])
+      ->where('people.position', '=', $clearedInputs['position'])
+      ->where('companies.name', '=', $clearedInputs['company'])
+      ->where('permits.start', '<=', $currentDate) // select valid (not expired) permits
+      ->where('permits.end', '>=', $currentDate) // select valid (not expired) permits
+      ->where(function($query) use ($id) {
+        if ($id) {
+          return $query->where('permits.id', '!=', $id);
+        }
+      })
+      ->orderByDesc('permits.id')
+      ->first();
+
+    if($duplicatePermit) {
+      if($duplicatePermit->dateEnd >= $clearedInputs['dateStart']) {
+        return [
+          'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+          'answer' => [
+            'error' => true,
+            'problem' => 'Ошибка! Произошло пересечение сроков действия с пропуском № ' . $duplicatePermit->number . ', у которого такие же значения, но дата окончания дейстия позже либо равна дате начала действия вводимого (либо редактируемого) пропуска.',
+            'solution' => 'Для пропусков с одинаковыми значениями задавайте сроки действия так, чтобы они не пересеклись. Вариант №1. Отредактируйте срок действия так, чтобы он не пересекался со сроком пропуска № ' . $duplicatePermit->number . '. Вариант №2. Сначала переведите пропуск № ' . $duplicatePermit->number . ' в число истёкших и затем повторите попытку добавления/редактирования вновь.',
+          ]
+        ];
+      }
+
+      // relevant only for update() actions
+      if($clearedInputs['number'] < $duplicatePermit->number and $clearedInputs['dateStart'] > $duplicatePermit->dateStart) {
+        return [
+          'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
+          'answer' => [
+            'error' => true,
+            'problem' => 'Ошибка хронологии! Для пропуска с более ранним номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать срок действия, который более поздний, чем у ранее зарегистрированного пропуска № ' . $duplicatePermit->number . ', срок действия которого ещё не истёк.',
+            'solution' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
+          ]
+        ];
+      }
     }
 
 
     return false;
   }
-
-
-  // // select not expired permits with the same imputs
-  // public function checkDuplication($clearedInputs, $id = 0) { // second argument is needed only on update operation
-  //   $duplicatePermit = DB::table('permits')
-  //     ->join('companies', 'permits.companies_id', '=', 'companies.id')
-  //     ->join('people', 'permits.people_id', '=', 'people.id')
-  //     ->select(
-  //       'permits.id',
-  //       'permits.number',
-
-  //       'people.surname',
-  //       'people.forename',
-  //       'people.patronymic',
-  //       'people.position',
-
-  //       'companies.name as company',
-
-  //       'permits.start as dateStart',
-  //       'permits.end as dateEnd'
-  //     )
-  //     ->where('people.surname', '=', $clearedInputs['surname'])
-  //     ->where('people.forename', '=', $clearedInputs['forename'])
-  //     ->where('people.patronymic', '=', $clearedInputs['patronymic'])
-  //     ->where('people.position', '=', $clearedInputs['position'])
-  //     ->where('companies.name', '=', $clearedInputs['company'])
-  //     ->where('permits.end', '>=', $clearedInputs['dateStart']) // select valid (not expired) permits
-  //     ->where(function($query) use ($id) {
-  //       if ($id) {
-  //         return $query->where('permits.id', '!=', $id);
-  //       }
-  //     })
-  //     ->orderByDesc('permits.id')
-  //     ->first();
-
-  //   return $duplicatePermit;
-  // }
 }

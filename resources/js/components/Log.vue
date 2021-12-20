@@ -14,7 +14,7 @@
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd }">
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing }">
         <td class="log__td">{{ permit.number }}</td>
         <td class="log__td">{{ permit.surname }}</td>
         <td class="log__td">{{ permit.forename }}</td>
@@ -23,7 +23,7 @@
         <td class="log__td">{{ permit.company }}</td>
         <td class="log__td">{{ formatDate(permit.dateStart) }}</td>
         <td class="log__td">
-          {{ formatDate(permit.dateEnd) }}
+          {{ formatDate(permit.dateEnd) }} <span v-if="permit.id == newPermit.id && permitEditing" class="material-icons-outlined md-24">edit...</span>
           <Toolbar v-bind:permit="permit" v-bind:disabled="curTime > permit.dateEnd"/>
         </td>
       </tr>
@@ -75,6 +75,8 @@ export default {
 
   computed: {
     ...mapState({ storedPermits: state => state.permit.storedPermits }),
+    ...mapState({ newPermit: state => state.permit.newPermit }),
+    ...mapState({ permitEditing: state => state.permit.permitEditing }),
   },
 
   created() {
@@ -124,6 +126,7 @@ export default {
   padding: 10px 0;
   color: #009c24;
   background-color: lightyellow;
+  transition: all .2s linear;
 }
 
 .log__tr .toolbar {
@@ -153,6 +156,16 @@ export default {
   background-color: rgb(248, 248, 248);
 }
 
+.log__tr_editing {
+  background-color: rgba(255, 183, 123, 0.568);
+  transform: scale(1.02, 1.02) ;
+  animation: blink 2s linear infinite;
+}
+
+.log__tr_editing:hover {
+  background-color: rgba(255, 160, 82, 0.767);
+}
+
 .log__td {
   position: relative;
   padding: 10px;
@@ -174,5 +187,11 @@ export default {
   .log__table {
     max-width: 70%;
   }
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: .4; }
+  100% { opacity: 1; }
 }
 </style>

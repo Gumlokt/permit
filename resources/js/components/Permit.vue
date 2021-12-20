@@ -1,7 +1,7 @@
 <template>
   <section class="permit">
-    <form class="card">
-      <h2 class="card__title"><span class="material-icons-outlined md-18">badge</span> Добавить пропуск</h2>
+    <form class="card" v-bind:class="{ 'card_editing': permitEditing }">
+      <h2 class="card__title"><span class="material-icons-outlined md-18">badge</span> {{ cardTitle }} пропуск</h2>
 
       <div class="card__body">
         <fieldset class="card__fieldset card__fieldset_first">
@@ -147,6 +147,8 @@ export default {
       newPermit: state => state.permit.newPermit,
       newPermitActionPath: state => state.permit.newPermitActionPath,
     }),
+    ...mapState({ cardTitle: state => state.permit.cardTitle }),
+    ...mapState({ permitEditing: state => state.permit.permitEditing }),
 
     resetButtonIsDisabled() {
       for (const prop in this.newPermit) {
@@ -184,6 +186,11 @@ export default {
 .card {
   border: 1px solid lightgray;
   border-radius: 5px;
+  transition: all .2s linear;
+}
+
+.card_editing {
+  border: 1px solid rgb(253, 114, 0);
 }
 
 .card__title {

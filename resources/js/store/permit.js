@@ -2,7 +2,8 @@ export default {
   namespaced: true,
 
   state: {
-    editing: false,
+    cardTitle: 'Добавить',
+    permitEditing: false,
     newPermitActionPath: {
       // store path by default
       path: "api/permits",
@@ -66,7 +67,8 @@ export default {
       state.newPermitActionPath.method = "PUT";
 
       this.commit("permit/setNewPermit", payload);
-      state.editing = true;
+      state.cardTitle = 'Отредактировать';
+      state.permitEditing = true;
     },
 
     copyPermit(state, payload) {
@@ -74,6 +76,8 @@ export default {
       this.commit("permit/setNextPermitNumber");
       state.newPermit.dateStart = null;
       state.newPermit.dateEnd = null;
+      state.cardTitle = 'Добавить';
+      state.permitEditing = false;
     },
 
     resetNewPermit(state, payload) {
@@ -90,6 +94,8 @@ export default {
         dateStart: null,
         dateEnd: null,
       };
+      state.cardTitle = 'Добавить';
+      state.permitEditing = false;
     },
 
     setNextPermitNumber(state, payload) {
