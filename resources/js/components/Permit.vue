@@ -8,7 +8,7 @@
           <div class="card__text-field">
             <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.number || focuses.number }" for="number">№ пропуска</label>
             <input type="text" size="10" name="number" class="card__text-input" v-model="newPermit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number" disabled>
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')" disabled><span class="material-icons material-icons-outlined">clear</span></button>
+            <!-- <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')" disabled><span class="material-icons material-icons-outlined">clear</span></button> -->
           </div>
 
           <div class="card__text-field">
@@ -43,15 +43,53 @@
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('company')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
-          <div class="card__text-field">
+          <!-- <div class="card__text-field">
             <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateStart || focuses.dateStart }" for="dateStart">Действует с</label>
             <input type="text" name="dateStart" class="card__text-input" v-model="newPermit.dateStart" @focus="focuses.dateStart = true" @blur="focuses.dateStart = false" ref="dateStart" id="dateStart">
+            <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateStart')"><span class="material-icons material-icons-outlined">clear</span></button>
+          </div> -->
+
+          <!-- <div class="card__text-field">
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateEnd || focuses.dateEnd }" for="dateEnd">Действует по</label>
+            <input type="text" name="dateEnd" class="card__text-input" v-model="newPermit.dateEnd" @focus="focuses.dateEnd = true" @blur="focuses.dateEnd = false" ref="dateEnd" id="dateEnd">
+            <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateEnd')"><span class="material-icons material-icons-outlined">clear</span></button>
+          </div> -->
+
+          <div class="card__text-field">
+            <label class="card__text-label card__text-label_lifted" for="dateStart">Действует с</label>
+            <Datepicker
+              name="dateStart"
+              class="card__text-input"
+              v-model="newPermit.dateStart"
+              :enableTimePicker="false"
+              :format="format"
+              :clearable="false"
+              locale="ru"
+              monthNameFormat="long"
+              placeholder="ДД.ММ.ГГГГ"
+              autoApply
+              hideInputIcon
+              uid="dateStart">
+            </Datepicker>
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateStart')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
 
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateEnd || focuses.dateEnd }" for="dateEnd">Действует по</label>
-            <input type="text" name="dateEnd" class="card__text-input" v-model="newPermit.dateEnd" @focus="focuses.dateEnd = true" @blur="focuses.dateEnd = false" ref="dateEnd" id="dateEnd">
+            <label class="card__text-label card__text-label_lifted" for="dateEnd">Действует по</label>
+            <Datepicker
+              name="dateEnd"
+              class="card__text-input"
+              v-model="newPermit.dateEnd"
+              :enableTimePicker="false"
+              :format="format"
+              :clearable="false"
+              locale="ru"
+              monthNameFormat="long"
+              placeholder="ДД.ММ.ГГГГ"
+              autoApply
+              hideInputIcon
+              uid="dateEnd">
+            </Datepicker>
             <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateEnd')"><span class="material-icons material-icons-outlined">clear</span></button>
           </div>
         </fieldset>
@@ -71,11 +109,30 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Datepicker from 'vue3-date-time-picker';
+import 'vue3-date-time-picker/dist/main.css';
 
 export default {
+  components: { Datepicker },
+
+  setup() {
+    const format = (date) => {
+      // console.log(date);
+      const day   = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+
+      return `${day}.${month}.${year}`;
+    }
+
+    return {
+      format,
+    }
+  },
+
   data() {
     return {
-      focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, }
+      focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, },
     }
   },
 
@@ -103,13 +160,25 @@ export default {
     },
 
     savePermit() {
+      const permit = {
+        id: this.newPermit.id,
+        number: this.newPermit.number,
+        surname: this.newPermit.surname,
+        forename: this.newPermit.forename,
+        patronymic: this.newPermit.patronymic,
+        company: this.newPermit.company,
+        position: this.newPermit.position,
+        dateStart: this.formatDate(this.newPermit.dateStart),
+        dateEnd: this.formatDate(this.newPermit.dateEnd),
+      };
+
       const res = fetch(this.newPermitActionPath.path, {
         method: this.newPermitActionPath.method,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.newPermit),
+        body: JSON.stringify(permit),
       })
       .then((response) => {
         return response.json();
@@ -122,7 +191,7 @@ export default {
         }
 
         if(res.errors) {
-          this.setPopupMessage({ problem: `Похоже, что водимымые данные содержат не известную ошибку. [ ${res.message} ]`, solution: 'Попробуйте исправить вводимые данные. Если после этого ошибка не исчезнет, обратитесь  за помощью к разработчику приложения.' });
+          this.setPopupMessage({ problem: `Похоже, что водимымые данные содержат неизвестную ошибку. [ ${res.message} ]`, solution: 'Попробуйте исправить вводимые данные. Если после этого ошибка не исчезнет, обратитесь  за помощью к разработчику приложения.' });
           this.openPopup();
           return;
         }
@@ -140,15 +209,27 @@ export default {
     getPermits() { // temporary method for development cases
       console.log(this.$store.state.permit.storedPermits);
     },
+
+    formatDate(permitDate) {
+      const date = new Date(permitDate);
+
+      const day   = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+
+      return `${day}.${month}.${year}`;
+    },
   },
 
   computed: {
     ...mapState({
       newPermit: state => state.permit.newPermit,
       newPermitActionPath: state => state.permit.newPermitActionPath,
+      cardTitle: state => state.permit.cardTitle,
+      permitEditing: state => state.permit.permitEditing,
     }),
-    ...mapState({ cardTitle: state => state.permit.cardTitle }),
-    ...mapState({ permitEditing: state => state.permit.permitEditing }),
+    // ...mapState({ cardTitle: state => state.permit.cardTitle }),
+    // ...mapState({ permitEditing: state => state.permit.permitEditing }),
 
     resetButtonIsDisabled() {
       for (const prop in this.newPermit) {
@@ -361,5 +442,26 @@ export default {
 
 .card__button_save:hover {
   background: steelblue;
+}
+.dp__theme_light {
+  /* --dp-background-color: #fff9f2; */
+  --dp-background-color: #fff;
+  --dp-text-color: #212121;
+  --dp-hover-color: #f3f3f3;
+  --dp-hover-text-color: #212121;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #1976d2;
+  --dp-primary-text-color: #f8f5f5;
+  --dp-secondary-color: #c0c4cc;
+  /* --dp-border-color: #ddd; */
+  --dp-border-color: none;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #f6f6f6;
+  --dp-scroll-bar-background: #f3f3f3;
+  --dp-scroll-bar-color: #959595;
+  --dp-success-color: #76d275;
+  --dp-success-color-disabled: #a3d9b1;
+  --dp-icon-color: #959595;
+  --dp-danger-color: #ff6f60;
 }
 </style>

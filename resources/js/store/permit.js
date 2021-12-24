@@ -34,32 +34,24 @@ export default {
         patronymic: "Иванович",
         company: "ООО Рога и Копыта",
         position: "Ведущий специалист",
-        dateStart: "20.08.2021",
-        dateEnd: "15.08.2021",
+        dateStart: "2021-12-22 00:00:00",
+        dateEnd: "2021-12-31 23:59:59",
       };
-      // console.log(payload);
       this.commit("permit/setNextPermitNumber", 2021);
     },
 
     setNewPermit(state, payload) {
-      const formatDate = (dateString) => {
-        let date = new Date(dateString);
-        let day = String(date.getDate()).padStart(2, "0");
-        let month = String(date.getMonth() + 1).padStart(2, "0"); // month number is an index number which is zero based, that's why +1 needed
-        let year = date.getFullYear();
-
-        return `${day}.${month}.${year}`;
+      state.newPermit = {
+        id: payload.id,
+        number: payload.number,
+        surname: payload.surname,
+        forename: payload.forename,
+        patronymic: payload.patronymic,
+        company: payload.company,
+        position: payload.position,
+        dateStart: payload.dateStart,
+        dateEnd: payload.dateEnd,
       };
-
-      state.newPermit.id = payload.id;
-      state.newPermit.number = payload.number;
-      state.newPermit.surname = payload.surname;
-      state.newPermit.forename = payload.forename;
-      state.newPermit.patronymic = payload.patronymic;
-      state.newPermit.company = payload.company;
-      state.newPermit.position = payload.position;
-      state.newPermit.dateStart = formatDate(payload.dateStart);
-      state.newPermit.dateEnd = formatDate(payload.dateEnd);
     },
 
     editPermit(state, payload) {
@@ -105,7 +97,7 @@ export default {
         currentYear = payload;
       }
 
-      console.log(currentYear);
+      // console.log(currentYear);
       // currentYear = 2019;
 
       const res = fetch(`api/permits/last/${currentYear}`, {
