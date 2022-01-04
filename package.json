@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "vue": "^3.2.26",
-        "vue3-date-time-picker": "^2.4.3",
+        "vue3-date-time-picker": "^2.4.4",
         "vuex": "^4.0.2"
     }
 }

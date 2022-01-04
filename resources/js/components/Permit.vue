@@ -6,54 +6,22 @@
       <div class="card__body">
         <fieldset class="card__fieldset card__fieldset_first">
           <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.number || focuses.number }" for="number">№ пропуска</label>
-            <input type="text" size="10" name="number" class="card__text-input" v-model="newPermit.number" @focus="focuses.number = true" @blur="focuses.number = false" ref="number" disabled>
+            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.number }" for="number">№ пропуска</label>
+            <input type="text" size="10" name="number" class="card__text-input" v-model="newPermit.number" disabled>
             <!-- <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')" disabled><span class="material-icons material-icons-outlined">clear</span></button> -->
           </div>
 
-          <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.surname || focuses.surname }" for="surname">Фамилия</label>
-            <input type="text" name="surname" class="card__text-input" v-model="newPermit.surname" @focus="focuses.surname = true" @blur="focuses.surname = false" ref="surname" id="surname">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('surname')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
+          <PersonAutocomplete v-bind:field="'surname'" v-bind:title="'Фамилия'"/>
 
-          <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.forename || focuses.forename }" for="forename">Имя</label>
-            <input type="text" name="forename" class="card__text-input" v-model="newPermit.forename" @focus="focuses.forename = true" @blur="focuses.forename = false" ref="forename" id="forename">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('forename')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
+          <PersonAutocomplete v-bind:field="'forename'" v-bind:title="'Имя'"/>
 
-          <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.patronymic || focuses.patronymic }" for="patronymic">Отчество</label>
-            <input type="text" name="patronymic" class="card__text-input" v-model="newPermit.patronymic" @focus="focuses.patronymic = true" @blur="focuses.patronymic = false" ref="patronymic" id="patronymic">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('patronymic')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
+          <PersonAutocomplete v-bind:field="'patronymic'" v-bind:title="'Отчество'"/>
         </fieldset>
 
         <fieldset class="card__fieldset">
-          <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.position || focuses.position }" for="position">Должность</label>
-            <input type="text" name="position" class="card__text-input" v-model="newPermit.position" @focus="focuses.position = true" @blur="focuses.position = false" ref="position" id="position">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('position')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
+          <PersonAutocomplete v-bind:field="'position'" v-bind:title="'Должность'"/>
 
-          <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.company || focuses.company }" for="company">Компания</label>
-            <input type="text" name="company" class="card__text-input" v-model="newPermit.company" @focus="focuses.company = true" @blur="focuses.company = false" ref="company">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('company')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div>
-
-          <!-- <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateStart || focuses.dateStart }" for="dateStart">Действует с</label>
-            <input type="text" name="dateStart" class="card__text-input" v-model="newPermit.dateStart" @focus="focuses.dateStart = true" @blur="focuses.dateStart = false" ref="dateStart" id="dateStart">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateStart')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div> -->
-
-          <!-- <div class="card__text-field">
-            <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.dateEnd || focuses.dateEnd }" for="dateEnd">Действует по</label>
-            <input type="text" name="dateEnd" class="card__text-input" v-model="newPermit.dateEnd" @focus="focuses.dateEnd = true" @blur="focuses.dateEnd = false" ref="dateEnd" id="dateEnd">
-            <button class="card__button card__button_reset-input" @click.prevent="clearInput('dateEnd')"><span class="material-icons material-icons-outlined">clear</span></button>
-          </div> -->
+          <PersonAutocomplete v-bind:field="'company'" v-bind:title="'Компания'"/>
 
           <div class="card__text-field">
             <label class="card__text-label card__text-label_lifted" for="dateStart">Действует с</label>
@@ -96,9 +64,9 @@
       </div>
 
       <div class="card__footer">
-        <button type="reset" class="card__button card__button_temporary" @click="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button>
-        <button type="reset" class="card__button card__button_temporary" @click="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
-        <button type="reset" class="card__button card__button_reset-form" @click="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
+        <button type="button" class="card__button card__button_temporary" @click.prevent="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button>
+        <button type="button" class="card__button card__button_temporary" @click.prevent="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
+        <button type="reset" class="card__button card__button_reset-form" @click.prevent="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
         <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
 
@@ -111,9 +79,10 @@
 import { mapState, mapMutations } from "vuex";
 import Datepicker from 'vue3-date-time-picker';
 import 'vue3-date-time-picker/dist/main.css';
+import PersonAutocomplete from "./PersonAutocomplete";
 
 export default {
-  components: { Datepicker },
+  components: { Datepicker, PersonAutocomplete },
 
   setup() {
     const format = (date) => {
@@ -130,11 +99,6 @@ export default {
     }
   },
 
-  data() {
-    return {
-      focuses: { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, },
-    }
-  },
 
   methods: {
     // ...mapMutations(['populatePermits']),
@@ -144,19 +108,17 @@ export default {
     ...mapMutations('permit', ['populatePermits']),
     ...mapMutations('permit', ['resetNewPermit']),
 
-    clearInput(inputField) {
-      this.newPermit[inputField] = null;
-      this.focusInput(inputField);
+    getFilteredPermits(inputField) {
+      console.log(`getFilteredPermits.... ${inputField}`);
     },
 
-    focusInput(inputField) {
-      this.$refs[inputField].focus();
+    clearInput(inputField) {
+      this.newPermit[inputField] = null;
     },
 
     resetForm() {
       this.resetNewPermit();
       this.setNextPermitNumber();
-      this.focuses = { number: false, surname: false, forename: false, patronymic: false, company: false, position: false, dateStart: false, dateEnd: false, };
     },
 
     savePermit() {
@@ -344,6 +306,7 @@ export default {
 }
 
 .card__text-input {
+  padding: 0 5px;
   width: 100%;
   border: 0;
   outline: 0;

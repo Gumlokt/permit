@@ -10,6 +10,15 @@ export default {
       method: "POST",
     },
     storedPermits: [],
+
+    permitSuggestions: { 
+      surname: [], 
+      forename: [], 
+      patronymic: [], 
+      position: [],
+      company: [], 
+    },
+
     newPermit: {
       id: null,
       number: null,
@@ -24,6 +33,25 @@ export default {
   },
 
   mutations: {
+    updatePermitSuggestions: function (state, payload) {
+      state.permitSuggestions[payload.field] = payload.value;
+    },
+
+    updateNewPermit: function (state, payload) {
+      // [:print:] matches a visible character [\x21-\x7E]
+      // \s+ matches any whitespace character (equal to [\r\n\t\f\v ])
+      let pattern = /[\d\w\s\+\-\*\/~!@"#№$;%\^:&?<>\(\)\[\]\{\}а-яА-ЯёЁ]+/;
+
+      if (pattern.test(payload.value)) {
+        if (!/^\s+/.test(payload.value)) {
+          state.newPermit[payload.field] = payload.value;
+        }
+        // console.log('field: ' + payload.field + '; value: ' + payload.value);
+      } else {
+        state.newPermit[payload.field] = '';
+      }
+    },
+
     fillInNewPermit(state, payload) {
       // temporary method for development cases
       state.newPermit = {

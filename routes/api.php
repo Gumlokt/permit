@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PermitController;
+use App\Http\Controllers\PersonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,5 @@ Route::post('permits', [ PermitController::class, 'store' ]); // store one permi
 Route::put('permits/{id}', [ PermitController::class, 'update' ]); // update one permit by id
 Route::delete('permits/expire/{id}', [ PermitController::class, 'expire' ]); // make the permit expired (by id)
 Route::delete('permits/{id}', [ PermitController::class, 'delete' ]); // delete one permit by id
+
+Route::post('person/autocomplete', [ PersonController::class, 'autocomplete' ]); // get filtered persons

@@ -1,9 +1,9 @@
 <template>
   <div class="toolbar">
-    <button class="toolbar__btn toolbar__btn-delete" @click="onPermitDelete" v-bind:disabled="disabled" title="Удалить из базы данных без возможности восстановления"><span class="material-icons-outlined md-24">clear</span></button>
-    <button class="toolbar__btn toolbar__btn-expire" @click="onPermitExpire" v-bind:disabled="disabled" title="Сделать срок действия пропуска истёкшим"><span class="material-icons-outlined md-24">delete</span></button>
-    <button class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)" v-bind:disabled="disabled" title="Отредактировать пропуск"><span class="material-icons-outlined md-24">edit</span></button>
-    <button class="toolbar__btn toolbar__btn-copy" @click="copyPermit(permit)" title="Создать новый пропуск на основе текущего"><span class="material-icons-outlined md-24">content_copy</span></button>
+    <button type="button" class="toolbar__btn toolbar__btn-delete" @click="onPermitDelete" v-bind:disabled="disabled" title="Удалить из базы данных без возможности восстановления"><span class="material-icons-outlined md-24">clear</span></button>
+    <button type="button" class="toolbar__btn toolbar__btn-expire" @click="onPermitExpire" v-bind:disabled="disabled" title="Сделать срок действия пропуска истёкшим"><span class="material-icons-outlined md-24">delete</span></button>
+    <button type="button" class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)" v-bind:disabled="disabled" title="Отредактировать пропуск"><span class="material-icons-outlined md-24">edit</span></button>
+    <button type="button" class="toolbar__btn toolbar__btn-copy" @click="copyPermit(permit)" title="Создать новый пропуск на основе текущего"><span class="material-icons-outlined md-24">content_copy</span></button>
   </div>
   <!-- <Popup /> -->
 </template>
