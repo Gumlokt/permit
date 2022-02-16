@@ -1,10 +1,31 @@
 <template>
   <section class="log">
-    <h3 class="log__title">Журнал пропусков</h3>
+    <form action="/permits/print" method="POST" class="log__panel" target="_blank">
+      <button type="submit" class="log__print-btn log__print-btn_all" @click.prevent="true" :disabled="printPool.length ? false : true">
+        <div class="log__print-icon">
+          <span class="material-icons-outlined">print</span>
+        </div>
+        <span class="log__print-btn-title">На печать</span>
+        <span class="log__print-badge" v-if="printPool.length">{{ printPool.length }}</span>
+      </button>
+
+      <div class="log__paginator">paginator will be here ...</div>
+    </form>
 
     <table class="log__table">
       <tr class="log__trh">
-        <th class="log__th">№ пропуска</th>
+        <th class="log__th">
+          <div class="log__th_print">
+            <p class="log__th_title">№</p>
+            <button type="button" class="log__print-btn log__print-btn_one log__print-btn_success" @click="selectAllPermitsToPrint()">
+              <span class="material-icons-outlined">print</span>
+            </button>
+
+            <button type="button" class="log__print-btn log__print-btn_one" @click="deselectAllPermitsToPrint()">
+              <span class="material-icons-outlined">print</span>
+            </button>
+          </div>
+        </th>
         <th class="log__th">Фамилия</th>
         <th class="log__th">Имя</th>
         <th class="log__th">Отчество</th>
@@ -14,8 +35,16 @@
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing }">
-        <td class="log__td">{{ permit.number }}</td>
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printPool.indexOf(permit.id) !== -1 }">
+        <td class="log__td">
+          <div class="log__td_container">
+            {{ permit.number }}
+            &emsp;
+            <button type="button" class="log__print-btn log__print-btn_one" @click="togglePermitToPrint(permit)" :class="{ 'log__print-btn_success': printPool.indexOf(permit.id) !== -1 }">
+              <span class="material-icons-outlined">print</span>
+            </button>
+          </div>
+        </td>
         <td class="log__td">{{ permit.surname }}</td>
         <td class="log__td">{{ permit.forename }}</td>
         <td class="log__td">{{ permit.patronymic }}</td>
@@ -44,7 +73,8 @@ export default {
 
   data() {
     return {
-      curTime: null
+      curTime: null,
+      printPool: [],
     }
   },
 
@@ -70,7 +100,27 @@ export default {
       let second = String(date.getSeconds()).padStart(2, '0');
 
       return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-    }
+    },
+
+    togglePermitToPrint(selectedPermit) {
+      if (this.printPool.indexOf(selectedPermit.id) !== -1) {
+        this.printPool.splice(this.printPool.indexOf(selectedPermit.id), 1);
+      } else {
+        this.printPool.push(selectedPermit.id);
+      }
+    },
+
+    selectAllPermitsToPrint() {
+      this.deselectAllPermitsToPrint();
+
+      for (let storedPermit of this.storedPermits) {
+        this.printPool.push(storedPermit.id);
+      }
+    },
+
+    deselectAllPermitsToPrint() {
+      this.printPool = [];
+    },
   },
 
   computed: {
@@ -88,9 +138,26 @@ export default {
 
 <style>
 .log {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 10px 0;
+  max-width: 1600px;
+
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
+}
+
+.log__panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1280px;
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 20px;
 }
 
 .log__title {
@@ -99,33 +166,41 @@ export default {
 
 .log__table {
   width: 100%;
-  max-width: 90%;
+  max-width: 100%;
   border-collapse: collapse;
 }
 
 .log__trh {
-  background-color: honeydew;
+  background: #e1f5fe;
 }
 
 .log__trh:hover {
-  background-color: rgb(227, 255, 227);
+  background: #cef0ff;
 }
 
 .log__th {
   padding: 11px 10px;
   border: 1px solid #ccc;
   font-size: 16px;
-  line-height: 1.2;
   font-weight: 400;
   border-left: 0;
   border-right: 0;
   text-align: left;
 }
 
+.log__th_print {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.log__th_title {
+  padding: 0 20px 0 0;
+}
+
 .log__tr {
-  padding: 10px 0;
   color: #009c24;
-  background-color: lightyellow;
+  background: lightyellow;
   transition: all .2s linear;
 }
 
@@ -140,7 +215,7 @@ export default {
 }
 
 .log__tr:hover {
-  background-color: lemonchiffon;
+  background: lemonchiffon;
 }
 
 .log__tr_upcoming {
@@ -148,44 +223,134 @@ export default {
 }
 
 .log__tr_expired {
-  background-color: rgb(248, 248, 248, .3);
+  background: rgb(248, 248, 248, .3);
   color: #da261d5b;
 }
 
 .log__tr_expired:hover {
-  background-color: rgb(248, 248, 248);
+  background: rgb(248, 248, 248);
 }
 
 .log__tr_editing {
-  background-color: rgba(255, 183, 123, 0.568);
+  background: rgba(255, 183, 123, 0.568);
   transform: scale(1.02, 1.02) ;
   animation: blink 2s linear infinite;
 }
 
 .log__tr_editing:hover {
-  background-color: rgba(255, 160, 82, 0.767);
+  background: rgba(255, 160, 82, 0.767);
+}
+
+.log__tr_printing {
+  background: #c3e6cb;
+}
+
+.log__tr_printing:hover {
+  background: #8ed19e;
 }
 
 .log__td {
   position: relative;
-  padding: 10px;
+  padding: 4px 10px;
   border: 1px solid #ccc;
   font-size: 16px;
-  line-height: 1.2;
   font-weight: 300;
   border-left: 0;
   border-right: 0;
 }
 
-@media screen and (max-width: 1420px) {
-  .log__table {
-    max-width: 98%;
-  }
+.log__td_container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
-@media screen and (min-width: 2000px) {
+.log__print-btn {
+  border: none;
+  background: transparent;
+  color: slategray;
+}
+
+.log__print-btn:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, .2);
+}
+
+.log__print-btn_all {
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px;
+
+  border-radius: 5px;
+  border: 1px solid slategray;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
+
+  color: #000;
+
+  transition: all .2s ease-in-out;
+}
+
+.log__print-btn_all:hover {
+  background: slategray;
+  color: #fff;
+  cursor: pointer;
+}
+
+.log__print-btn_all:disabled {
+  color: lightslategray;
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.log__print-btn_all:disabled:hover {
+  color: lightslategray;
+  background: transparent;
+}
+
+.log__print-btn_one {
+  width: 40px;
+  height: 35px;
+
+  transition: all .4s ease;
+}
+.log__print-btn_one:hover {
+  transform: scale(1.1, 1.1);
+}
+
+.log__print-btn_success {
+  color: #009c24;
+}
+
+.log__print-icon {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.log__print-btn-title {
+  display: block;
+  box-sizing: border-box;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+
+.log__print-badge {
+  display: block;
+  box-sizing: border-box;
+  margin: 0 0 0 10px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #8ed19e;
+}
+
+@media screen and (max-width: 1600px) {
   .log__table {
-    max-width: 70%;
+    max-width: 99%;
   }
 }
 

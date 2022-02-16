@@ -71,7 +71,7 @@
       </div>
 
     </form>
-        &nbsp;&nbsp;&nbsp;<span>{{ newPermit.id }}</span>
+        <!-- &nbsp;&nbsp;&nbsp;<span>{{ newPermit.id }}</span> -->
   </section>
 </template>
 
@@ -223,7 +223,11 @@ export default {
 
 <style>
 .permit {
-  padding: 20px 0;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 20px 0 10px;
+
+  max-width: 1280px;
 }
 
 .card {
@@ -249,7 +253,7 @@ export default {
 }
 
 .card__body {
-  padding: 20px;
+  padding: 10px 20px;
 }
 
 .card__fieldset {
@@ -380,7 +384,7 @@ export default {
 }
 
 .card__footer {
-  padding: 10px 20px;
+  padding: 5px 20px;
   background: #f7f7f7;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -406,6 +410,13 @@ export default {
 .card__button_save:hover {
   background: steelblue;
 }
+
+@media screen and (max-width: 1280px) {
+  .permit {
+    max-width: 99%;
+  }
+}
+
 .dp__theme_light {
   /* --dp-background-color: #fff9f2; */
   --dp-background-color: #fff;

@@ -12,7 +12,9 @@
         <p class="popup__message popup__message_solution">{{ popupMessage.solution }}</p>
       </div>
 
-      <div class="popup__footer">Some stuff</div>
+      <div class="popup__footer">
+        <button class="popup__btn-ok" @click="closePopup">Закрыть</button>
+      </div>
     </div>
   </div>
 </template>
@@ -23,7 +25,8 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      headerTitle: 'Заголовок окна'
+      headerTitle: 'Сообщение',
+      footerTitle: null
     }
   },
 
@@ -152,5 +155,29 @@ export default {
   font-size: 20px;
   line-height: 1.2;
   font-weight: 300;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.popup__btn-ok {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: transparent;
+  border: 1px solid slategray;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
+
+  transition: all .2s ease-in-out;
+}
+
+.popup__btn-ok:hover {
+  background: slategray;
+  color: #fff;
+  cursor: pointer;
 }
 </style>

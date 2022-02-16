@@ -10,14 +10,14 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "@vue/compiler-sfc": "^3.2.26",
-        "laravel-mix": "^6.0.39",
-        "postcss": "^8.4.5",
+        "@vue/compiler-sfc": "^3.2.31",
+        "laravel-mix": "^6.0.42",
+        "postcss": "^8.4.6",
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
-        "vue": "^3.2.26",
-        "vue3-date-time-picker": "^2.4.4",
+        "vue": "^3.2.31",
+        "vue3-date-time-picker": "^2.6.0",
         "vuex": "^4.0.2"
     }
 }

@@ -3,9 +3,8 @@
 
   <main class="main">
     <Permit />
+    <Log />
   </main>
-
-  <Log />
 
   <button @click="openPopup">Open Popup</button>
   <Popup />
@@ -39,13 +38,14 @@ export default {
 
 <style>
 .main {
-  margin: 0 auto;
-  max-width: 1280px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media screen and (max-width: 1420px) {
+/* @media screen and (max-width: 1420px) {
   .main {
     padding: 0 10px;
   }
-}
+} */
 </style>
