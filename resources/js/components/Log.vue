@@ -1,15 +1,16 @@
 <template>
   <section class="log">
     <form action="/permits/print" method="POST" class="log__panel" target="_blank">
-      <button type="submit" class="log__print-btn log__print-btn_all" @click.prevent="true" :disabled="printPool.length ? false : true">
+      <input type="hidden" name="_token" v-bind:value="token">
+      <input type="hidden" name="permits" v-bind:value="printBag">
+
+      <button type="submit" class="log__print-btn log__print-btn_all" :disabled="printBag.length ? false : true">
         <div class="log__print-icon">
           <span class="material-icons-outlined">print</span>
         </div>
         <span class="log__print-btn-title">На печать</span>
-        <span class="log__print-badge" v-if="printPool.length">{{ printPool.length }}</span>
+        <span class="log__print-badge" v-if="printBag.length">{{ printBag.length }}</span>
       </button>
-
-      <div class="log__paginator">paginator will be here ...</div>
     </form>
 
     <table class="log__table">
@@ -35,12 +36,12 @@
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printPool.indexOf(permit.id) !== -1 }">
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printBag.indexOf(permit.id) !== -1 }">
         <td class="log__td">
           <div class="log__td_container">
             {{ permit.number }}
             &emsp;
-            <button type="button" class="log__print-btn log__print-btn_one" @click="togglePermitToPrint(permit)" :class="{ 'log__print-btn_success': printPool.indexOf(permit.id) !== -1 }">
+            <button type="button" class="log__print-btn log__print-btn_one" @click="togglePermitToPrint(permit)" :class="{ 'log__print-btn_success': printBag.indexOf(permit.id) !== -1 }">
               <span class="material-icons-outlined">print</span>
             </button>
           </div>
@@ -57,8 +58,6 @@
         </td>
       </tr>
     </table>
-
-    <h4>{{ curTime }}</h4>
   </section>
 </template>
 
@@ -73,8 +72,9 @@ export default {
 
   data() {
     return {
+      token: '',
       curTime: null,
-      printPool: [],
+      printBag: [],
     }
   },
 
@@ -103,10 +103,10 @@ export default {
     },
 
     togglePermitToPrint(selectedPermit) {
-      if (this.printPool.indexOf(selectedPermit.id) !== -1) {
-        this.printPool.splice(this.printPool.indexOf(selectedPermit.id), 1);
+      if (this.printBag.indexOf(selectedPermit.id) !== -1) {
+        this.printBag.splice(this.printBag.indexOf(selectedPermit.id), 1);
       } else {
-        this.printPool.push(selectedPermit.id);
+        this.printBag.push(selectedPermit.id);
       }
     },
 
@@ -114,12 +114,12 @@ export default {
       this.deselectAllPermitsToPrint();
 
       for (let storedPermit of this.storedPermits) {
-        this.printPool.push(storedPermit.id);
+        this.printBag.push(storedPermit.id);
       }
     },
 
     deselectAllPermitsToPrint() {
-      this.printPool = [];
+      this.printBag = [];
     },
   },
 
@@ -131,6 +131,9 @@ export default {
 
   created() {
     setInterval(() => { this.curTime = this.getCurrentDateTime(); }, 1000);
+
+    let token = document.head.querySelector('meta[name="csrf-token"]');
+    this.token = token.content;
   }
 
 };

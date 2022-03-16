@@ -4,7 +4,10 @@
       <button class="popup__btn-close" @click="closePopup"></button>
 
       <div class="popup__header">
-        <h4 class="popup__header_title">{{ headerTitle }}</h4>
+        <h4 class="popup__header_title">
+          <span class="material-icons-outlined">chat_bubble_outline</span>
+          {{ headerTitle }}
+        </h4>
       </div>
 
       <div class="popup__body">
@@ -121,6 +124,9 @@ export default {
   font-size: 20px;
   line-height: 1.2;
   font-weight: 300;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .popup__body {

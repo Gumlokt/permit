@@ -32,4 +32,6 @@ Route::put('permits/{id}', [ PermitController::class, 'update' ]); // update one
 Route::delete('permits/expire/{id}', [ PermitController::class, 'expire' ]); // make the permit expired (by id)
 Route::delete('permits/{id}', [ PermitController::class, 'delete' ]); // delete one permit by id
 
+// Route::get('print', [ PermitController::class, 'print' ]); // print permits
+
 Route::post('person/autocomplete', [ PersonController::class, 'autocomplete' ]); // get filtered persons

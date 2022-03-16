@@ -1,0 +1,156 @@
+body {
+  background: #ccc;
+}
+/* A4:  297x210 */
+.page {
+  box-sizing: border-box;
+  width: 297mm;
+  height: 210mm;
+
+  background: white;
+
+  margin: 0 auto;
+  padding: 7mm 6mm 7mm 7mm;
+
+  page-break-after: always;
+
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: repeat(4, auto);
+  grid-auto-flow: column;
+  justify-content: start;
+  align-content: start;
+}
+
+@media print {
+  body,
+  page {
+    margin: 0;
+  }
+}
+
+.permit {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 5px 0;
+
+  width: 71mm;
+  height: 49mm;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.permit:nth-of-type(1) {
+  border: 1px dotted slategray;
+}
+
+/* элементы со 2-го по 4-й */
+.permit:nth-of-type(n + 2):nth-of-type(-n + 4) {
+  border-right: 1px dotted slategray;
+  border-bottom: 1px dotted slategray;
+  border-left: 1px dotted slategray;
+}
+
+/* каждый 4-й элемент, начиная с 5-го */
+.permit:nth-of-type(4n + 5) {
+  border-top: 1px dotted slategray;
+  border-right: 1px dotted slategray;
+  border-bottom: 1px dotted slategray;
+}
+
+/* элементы 6-8, 10-12, 14-16 */
+.permit:nth-of-type(n + 6):nth-of-type(-n + 8),
+.permit:nth-of-type(n + 10):nth-of-type(-n + 12),
+.permit:nth-of-type(n + 14):nth-of-type(-n + 16) {
+  border-right: 1px dotted slategray;
+  border-bottom: 1px dotted slategray;
+}
+
+.permit__logo {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0;
+
+  width: 68mm;
+  height: 18mm;
+}
+
+.permit__content {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0;
+
+  width: 68mm;
+  height: 31mm;
+}
+
+.permit__surname {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 3px 0 0;
+
+  font-size: 18px;
+  line-height: 20px;
+  text-align: center;
+  color: red;
+}
+
+.permit__name {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 3px 0 0;
+
+  font-size: 16px;
+  line-height: 18px;
+  text-align: center;
+  color: red;
+}
+
+.permit__items {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 4px 0;
+}
+
+.permit__item {
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 5px 0 0;
+
+  display: flex;
+  justify-content: start;
+}
+
+.permit__title {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 1px;
+  width: 100px;
+
+  font-size: 11px;
+  line-height: 13px;
+  font-weight: normal;
+}
+
+.permit__value {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 1px;
+  width: 100%;
+
+  font-size: 11px;
+  line-height: 13px;
+  font-weight: normal;
+
+  border-bottom: 1px solid darkgray;
+}

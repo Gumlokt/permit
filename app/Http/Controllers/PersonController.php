@@ -30,15 +30,15 @@ class PersonController extends Controller {
     ->select($field)
     ->where($field, '!=', '')
     ->where(function ($query) use ($field, $term) {
-            $query->where($field, 'LIKE', '%' . $term . '%');
-        })
+        $query->where($field, 'LIKE', '%' . $term . '%');
+      })
     ->distinct()
     ->orderBy($field, 'ASC')
     ->get();
 
     $result = [];
     foreach ($selection as $entry) {
-        $result[] = $entry->$field;
+      $result[] = $entry->$field;
     }
 
 

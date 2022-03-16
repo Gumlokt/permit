@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PermitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::post('permits/print', [ PermitController::class, 'print' ]); // print permits

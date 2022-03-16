@@ -64,14 +64,13 @@
       </div>
 
       <div class="card__footer">
-        <button type="button" class="card__button card__button_temporary" @click.prevent="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button>
-        <button type="button" class="card__button card__button_temporary" @click.prevent="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button>
+        <!-- <button type="button" class="card__button card__button_temporary" @click.prevent="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button> -->
+        <!-- <button type="button" class="card__button card__button_temporary" @click.prevent="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button> -->
         <button type="reset" class="card__button card__button_reset-form" @click.prevent="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
         <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
 
     </form>
-        <!-- &nbsp;&nbsp;&nbsp;<span>{{ newPermit.id }}</span> -->
   </section>
 </template>
 
@@ -86,7 +85,6 @@ export default {
 
   setup() {
     const format = (date) => {
-      // console.log(date);
       const day   = date.getDate().toString().padStart(2, '0');
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const year = date.getFullYear();
@@ -101,7 +99,6 @@ export default {
 
 
   methods: {
-    // ...mapMutations(['populatePermits']),
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
     ...mapMutations('permit', ['fillInNewPermit']), // get dummy data
     ...mapMutations('permit', ['setNextPermitNumber']),
@@ -190,8 +187,6 @@ export default {
       cardTitle: state => state.permit.cardTitle,
       permitEditing: state => state.permit.permitEditing,
     }),
-    // ...mapState({ cardTitle: state => state.permit.cardTitle }),
-    // ...mapState({ permitEditing: state => state.permit.permitEditing }),
 
     resetButtonIsDisabled() {
       for (const prop in this.newPermit) {
@@ -389,8 +384,9 @@ export default {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   display: grid;
-  grid-template-columns: repeat(4, 130px);
+  grid-template-columns: repeat(2, 130px);
   justify-content: end;
+
   gap: 10px;
   border-top: 1px solid lightgray;
 }

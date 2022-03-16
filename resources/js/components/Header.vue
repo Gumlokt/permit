@@ -5,18 +5,18 @@
 
       <ul class="menu__items">
         <li class="menu__item">
-          <a href="#" class="menu__link menu__link_active"><span class="material-icons-outlined md-18">home</span> Главная</a>
+          <a href="/" class="menu__link menu__link_active"><span class="material-icons-outlined md-18">home</span> Главная</a>
         </li>
-        <li class="menu__item">
+        <!-- <li class="menu__item">
           <a href="#" class="menu__link"><span class="material-icons-outlined md-18">search</span>Поиск</a>
         </li>
         <li class="menu__item">
           <a href="#" class="menu__link"><span class="material-icons-outlined md-18">bar_chart</span> Статистика</a>
-        </li>
+        </li> -->
       </ul>
 
       <div class="menu__user">
-        <a href="#" class="menu__link"><span class="material-icons-outlined md-18">settings</span> Настройки</a>
+        <!-- <a href="#" class="menu__link"><span class="material-icons-outlined md-18">settings</span> Настройки</a> -->
       </div>
     </nav>
   </header>

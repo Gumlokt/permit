@@ -35,10 +35,10 @@ class PermitController extends Controller {
         'permits.end as dateEnd'
       )
       ->orderByDesc('permits.id')
+      ->take(16)
       ->get();
 
-      return $permits;
-      // return Permit::all();
+    return $permits;
   }
 
 
@@ -77,25 +77,12 @@ class PermitController extends Controller {
     $clearedInputs['dateStart'] = $this->handleDateStart($clearedInputs['dateStart']); // now dates are converted from 'd.m.Y' format to 'Y-m-d H:i:s' and can be safely compared
     $clearedInputs['dateEnd'] = $this->handleDateEnd($clearedInputs['dateEnd']);
 
-    // // dateStart can not be older then dateEnd
+    // dateStart can not be older then dateEnd
     $res = $this->checkErrorsOfPermitDates($clearedInputs);
 
     if ($res) {
       return response()->json($res['answer'], $res['statusCode']);
     }
-
-
-
-    // Get permits with the same data, except for the permit number and dates, if they are exist
-
-    // $duplicatePermit = $this->checkDuplication($clearedInputs);
-    // if($duplicatePermit) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' с такими же введёнными значениями, у которого дата окончания дейстия позже даты начала действия вновь вводимого пропуска.',
-    //     'solution' => 'Для добавления в базу вновь вводимого пропуска необходимо перевести ранее зарегистрированный и до сих пор действующий пропуск № ' . $duplicatePermit->number . ' в разряд истёкших.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
 
     $this->permitData['company'] = Company::store($clearedInputs);
     $this->permitData['person'] = Person::store($clearedInputs);
@@ -121,41 +108,11 @@ class PermitController extends Controller {
     $clearedInputs['dateStart'] = $this->handleDateStart($clearedInputs['dateStart']); // now dates are converted from 'd.m.Y' format to 'Y-m-d H:i:s' and can be safely compared
     $clearedInputs['dateEnd'] = $this->handleDateEnd($clearedInputs['dateEnd']);
 
-    // // dateStart can not be older then dateEnd
-    // if($clearedInputs['dateStart'] > $clearedInputs['dateEnd']) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'Дата начала действия вновь вводимого пропуска позднее даты окончания действия.',
-    //     'solution' => 'Исправьте срок действия вновь вводимого пропуска.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
-
     $res = $this->checkErrorsOfPermitDates($clearedInputs, $id);
 
     if ($res) {
       return response()->json($res['answer'], $res['statusCode']);
     }
-
-    // $currentDate = date('Y-m-d') . ' 00:00:00';
-    // // dateEnd can not be older then currentDate
-    // if($currentDate > $clearedInputs['dateEnd']) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'Запрещён ввод заведомо истёкших пропусков.',
-    //     'solution' => 'Исправьте дату окончания действия вновь вводимого пропуска на текущую либо более позднюю.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
-
-
-    // // Get permits with the same data, except for the permit number and dates, if they are exist
-    // $duplicatePermit = $this->checkDuplication($clearedInputs, $id);
-    // if($duplicatePermit) {
-    //   return response()->json([
-    //     'error' => true,
-    //     'problem' => 'В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' с такими же введёнными значениями, у которого дата окончания дейстия позже даты начала действия вновь вводимого пропуска.',
-    //     'solution' => 'Для добавления в базу вновь вводимого пропуска необходимо перевести ранее зарегистрированный и до сих пор действующий пропуск № ' . $duplicatePermit->number . ' в разряд истёкших.',
-    //   ], 409); // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
-    // }
 
     $permit = Permit::find($id);
 
@@ -253,6 +210,30 @@ class PermitController extends Controller {
   }
 
 
+  public function print(Request $request) {
+    $ids = explode(",", $request->input('permits'));
+    $permits = Permit::find($ids);
+
+    $pages = [];
+    $count = count($permits);
+    for ($p = 0, $i = 0, $j = 0; $j < $count; $i++, $j++) {
+      $pages[$p][$i] = $permits[$j];
+
+      if (15 == $i) {
+        $p++;
+        $i = -1;
+      }
+    }
+
+    return view('print', [ 'pages' => $pages, ]);
+  }
+
+
+
+
+
+
+
   // Delete unused companies and persons from DB if they are exist
   private function clearDb($deletedPermit) {
     $anotherPermit = Permit::where('companies_id', '=', $deletedPermit->companies_id)->first();
@@ -265,7 +246,6 @@ class PermitController extends Controller {
       Person::destroy($deletedPermit->companies_id);
     }
   }
-
 
 
 
@@ -384,8 +364,6 @@ class PermitController extends Controller {
       ->first();
 
     if($duplicatePermit) {
-      // Log::debug('Permit number: ' . $duplicatePermit->number);
-
       $answer = [
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [

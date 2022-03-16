@@ -192,7 +192,6 @@ export default {
   left: 0;
   line-height: 2em;
 
-  /* overflow: hidden; */
   z-index: 20;
 
   max-height: 132px;

@@ -6,7 +6,7 @@
     <Log />
   </main>
 
-  <button @click="openPopup">Open Popup</button>
+  <!-- <button @click="openPopup">Open Popup</button> -->
   <Popup />
 </template>
 
@@ -26,9 +26,9 @@ export default {
     Popup,
   },
 
-  methods: {
-    ...mapMutations('popup', ['openPopup']),
-  },
+  // methods: {
+  //   ...mapMutations('popup', ['openPopup']),
+  // },
 
   computed: {
     ...mapState({ popupOpened: state => state.popup.popupOpened }),
@@ -40,7 +40,7 @@ export default {
 .main {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 0 0 20px;
 }
 
 /* @media screen and (max-width: 1420px) {
