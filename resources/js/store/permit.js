@@ -11,14 +11,6 @@ export default {
     },
     storedPermits: [],
 
-    permitSuggestions: { 
-      surname: [], 
-      forename: [], 
-      patronymic: [], 
-      position: [],
-      company: [], 
-    },
-
     newPermit: {
       id: null,
       number: null,
@@ -33,10 +25,6 @@ export default {
   },
 
   mutations: {
-    updatePermitSuggestions: function (state, payload) {
-      state.permitSuggestions[payload.field] = payload.value;
-    },
-
     updateNewPermit: function (state, payload) {
       // [:print:] matches a visible character [\x21-\x7E]
       // \s+ matches any whitespace character (equal to [\r\n\t\f\v ])
@@ -45,11 +33,52 @@ export default {
       if (pattern.test(payload.value)) {
         if (!/^\s+/.test(payload.value)) {
           state.newPermit[payload.field] = payload.value;
+          console.log(payload.value);
         }
         // console.log('field: ' + payload.field + '; value: ' + payload.value);
       } else {
         state.newPermit[payload.field] = '';
       }
+
+      if(state.newPermit.surname || state.newPermit.forename || state.newPermit.patronymic || state.newPermit.position || state.newPermit.company) {
+        this.commit("permit/filterPermits");
+      }
+
+      if(!state.newPermit.surname && !state.newPermit.forename && !state.newPermit.patronymic && !state.newPermit.position && !state.newPermit.company) {
+        this.commit("permit/populatePermits");
+      }
+
+    },
+
+    filterPermits(state, payload) {
+      const res = fetch(`api/permits/filter`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mainPermitFields: {
+            surname: state.newPermit.surname,
+            forename: state.newPermit.forename,
+            patronymic: state.newPermit.patronymic,
+            position: state.newPermit.position,
+            company: state.newPermit.company,
+          }
+        }),
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        console.log(res);
+        state.storedPermits = res;
+        return res; // res is an array of objects, where each object contain permit data
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     },
 
     fillInNewPermit(state, payload) {

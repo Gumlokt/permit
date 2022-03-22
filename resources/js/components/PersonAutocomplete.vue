@@ -40,6 +40,7 @@ export default {
     return {
       typedText: null,
       focus: false,
+      inputSuggestions: [],
       openSuggestionsList: false,
       highlightIndex: 0
     }
@@ -60,8 +61,8 @@ export default {
 
   methods: {
     ...mapMutations('permit', ['deletePermit']),
-    ...mapMutations('permit', ['updatePermitSuggestions']),
     ...mapMutations('permit', ['updateNewPermit']),
+    ...mapMutations('permit', ['populatePermits']),
 
     setFocus() {
       this.focus = true;
@@ -158,7 +159,6 @@ export default {
   computed: {
     ...mapState({
       newPermit: state => state.permit.newPermit,
-      permitSuggestions: state => state.permit.permitSuggestions,
     }),
 
     currentText: {
@@ -167,8 +167,8 @@ export default {
     },
 
     currentSuggestions: {
-      get () { return this.permitSuggestions[this.field]; },
-      set (value) { this.updatePermitSuggestions({ field: this.field, value: value }); }
+      get () { return this.inputSuggestions; },
+      set (value) { this.inputSuggestions = value; }
     },
   }
 };

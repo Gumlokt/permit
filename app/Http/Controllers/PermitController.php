@@ -42,6 +42,61 @@ class PermitController extends Controller {
   }
 
 
+  // Return filtered permits
+  public function filter(Request $request) {
+    $mainPermitFields = $request->input('mainPermitFields');
+
+    $filteredPermits = DB::table('permits')
+      ->join('companies', 'permits.companies_id', '=', 'companies.id')
+      ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.id',
+        'permits.number',
+
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'people.position',
+
+        'companies.name as company',
+
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
+      )
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['surname'])) {
+          return $query->where('surname', '=', $mainPermitFields['surname']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['forename'])) {
+          return $query->where('forename', '=', $mainPermitFields['forename']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['patronymic'])) {
+          return $query->where('patronymic', '=', $mainPermitFields['patronymic']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['position'])) {
+          return $query->where('position', '=', $mainPermitFields['position']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['company'])) {
+          return $query->where('companies.name', '=', $mainPermitFields['company']);
+        }
+      })
+      ->orderByDesc('permits.id')
+      ->get();
+
+
+      return $filteredPermits;
+  }
+
+
+  // Return last permit ID
   public function last($year) {
     $lastNumber = Permit::where('start', '<=', $year . '-12-31 23:59:59')->max('number');
 

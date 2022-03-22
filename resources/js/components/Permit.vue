@@ -116,6 +116,7 @@ export default {
     resetForm() {
       this.resetNewPermit();
       this.setNextPermitNumber();
+      this.populatePermits();
     },
 
     savePermit() {
@@ -155,7 +156,7 @@ export default {
           return;
         }
 
-        this.populatePermits();
+        // this.populatePermits();
         this.resetForm();
         return res;
       })

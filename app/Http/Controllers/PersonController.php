@@ -14,13 +14,10 @@ use App\Models\Person;
 
 
 class PersonController extends Controller {
-  //
   public function autocomplete(Request $request) {
     $field = $request->input('field');
     $term = $request->input('term');
     
-    // Log::debug($field);
-
     switch ($field) {
       case 'company': $table = 'companies'; $field = 'name'; break;
       default: $table = 'people'; break;
@@ -36,13 +33,13 @@ class PersonController extends Controller {
     ->orderBy($field, 'ASC')
     ->get();
 
-    $result = [];
+    $inputSuggestions = [];
     foreach ($selection as $entry) {
-      $result[] = $entry->$field;
+      $inputSuggestions[] = $entry->$field;
     }
 
 
-    return $result;
+    return $inputSuggestions;
   }
 
 

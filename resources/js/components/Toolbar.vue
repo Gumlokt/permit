@@ -39,7 +39,7 @@ export default {
     onPermitDelete() {
       this.openPopup;
 
-      if (confirm(`Вы дейстительно желаете удалить пропуск № ${this.permit.number} из базы данных без возможности восстановления?`)) {
+      if (confirm(`Вы дейстительно желаете безвозвратно удалить пропуск № ${this.permit.number} из базы данных без возможности последующего его восстановления?`)) {
         this.deletePermit(this.permit.id);
       }
     },
