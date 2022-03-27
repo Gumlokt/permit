@@ -1,17 +1,37 @@
 <template>
   <section class="log">
-    <form action="/permits/print" method="POST" class="log__panel" target="_blank">
-      <input type="hidden" name="_token" v-bind:value="token">
-      <input type="hidden" name="permits" v-bind:value="printBag">
+    <div class="log__panel">
+      <form action="/permits/print" method="POST" class="log__form" target="_blank">
+        <input type="hidden" name="_token" v-bind:value="token">
+        <input type="hidden" name="permits" v-bind:value="printBag">
 
-      <button type="submit" class="log__print-btn log__print-btn_all" :disabled="printBag.length ? false : true">
-        <div class="log__print-icon">
-          <span class="material-icons-outlined">print</span>
-        </div>
-        <span class="log__print-btn-title">На печать</span>
-        <span class="log__print-badge" v-if="printBag.length">{{ printBag.length }}</span>
-      </button>
-    </form>
+        <button type="submit" class="log__print-btn log__print-btn_all" :disabled="printBag.length ? false : true">
+          <div class="log__print-icon">
+            <span class="material-icons-outlined">print</span>
+          </div>
+          <span class="log__print-btn-title">На печать</span>
+          <span class="log__print-badge" v-if="printBag.length">{{ printBag.length }}</span>
+        </button>
+      </form>
+
+      <Paginate
+        v-model="currentPage"
+
+        :page-count="pages"
+        :page-range="5"
+        :margin-pages="2"
+
+        :click-handler="displayNextItems"
+
+        :page-class="'page-item'"
+        :first-button-text="'В начало'"
+        :last-button-text="'В конец'"
+        :prev-text="'пред.'"
+        :next-text="'след.'"
+        :first-last-button="true"
+      >
+      </Paginate>
+    </div>
 
     <table class="log__table">
       <tr class="log__trh">
@@ -62,11 +82,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import Toolbar from "./Toolbar";
+import Paginate from "vuejs-paginate-next";
 
 export default {
   components: {
+    Paginate,
     Toolbar,
   },
 
@@ -74,11 +96,14 @@ export default {
     return {
       token: '',
       curTime: null,
-      printBag: [],
     }
   },
 
   methods: {
+    ...mapMutations('permit', ['setPage']),
+    ...mapMutations('permit', ['filterPermits']),
+    ...mapMutations('permit', ['deselectAllPermitsToPrint']),
+
     formatDate(dateString) {
       let date = new Date(dateString);
       let day = String(date.getDate()).padStart(2, '0');
@@ -118,8 +143,9 @@ export default {
       }
     },
 
-    deselectAllPermitsToPrint() {
-      this.printBag = [];
+    displayNextItems(pageNum) {
+      this.filterPermits(); // 1 - first page for pagination
+      this.deselectAllPermitsToPrint();
     },
   },
 
@@ -127,6 +153,16 @@ export default {
     ...mapState({ storedPermits: state => state.permit.storedPermits }),
     ...mapState({ newPermit: state => state.permit.newPermit }),
     ...mapState({ permitEditing: state => state.permit.permitEditing }),
+    ...mapState({
+      page: state => state.permit.page,
+      pages: state => state.permit.pages,
+      printBag: state => state.permit.printBag,
+    }),
+
+    currentPage: {
+      get () { return this.page; },
+      set (value) { this.setPage(value); }
+    },
   },
 
   created() {
@@ -150,17 +186,26 @@ export default {
   grid-template-columns: 1fr;
   justify-items: center;
 }
-
 .log__panel {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0 0 20px;
   width: 100%;
   max-width: 1280px;
 
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.log__form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   box-sizing: border-box;
   margin: 0;
-  padding: 0 0 20px;
+  padding: 0;
 }
 
 .log__title {
@@ -285,14 +330,10 @@ export default {
 
   box-sizing: border-box;
   margin: 0;
-  padding: 10px;
+  padding: 8px 16px;
 
   border-radius: 5px;
   border: 1px solid slategray;
-  font-size: 16px;
-  line-height: 1.2;
-  font-weight: 300;
-
   color: #000;
 
   transition: all .2s ease-in-out;
@@ -340,6 +381,10 @@ export default {
   box-sizing: border-box;
   margin: 0 0 0 10px;
   padding: 0;
+
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
 }
 
 .log__print-badge {
@@ -350,6 +395,89 @@ export default {
   border-radius: 5px;
   background: #8ed19e;
 }
+
+.log__print-btn .material-icons-outlined {
+  display: block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+/* Pagination (based on Bootstrap v5.1.3) */
+.pagination {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  color: #0d6efd;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-link {
+    transition: none;
+  }
+}
+.page-link:hover {
+  z-index: 2;
+  color: #0a58ca;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+  cursor: pointer;
+}
+.page-link:focus {
+  z-index: 3;
+  color: #0a58ca;
+  background-color: #e9ecef;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.page-item:not(:first-child) .page-link {
+  margin-left: -1px;
+}
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+.page-link {
+  padding: 0.375rem 0.75rem;
+}
+
+.page-item:first-child .page-link {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+.page-item:last-child .page-link {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+
 
 @media screen and (max-width: 1600px) {
   .log__table {

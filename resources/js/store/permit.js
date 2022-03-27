@@ -2,7 +2,22 @@ export default {
   namespaced: true,
 
   state: {
-    cardTitle: 'Добавить',
+    typedText: {
+      surname: null,
+      forename: null,
+      patronymic: null,
+      position: null,
+      company: null,
+    },
+    inputSuggestions: {
+      surname: [],
+      forename: [],
+      patronymic: [],
+      position: [],
+      company: [],
+    },
+
+    cardTitle: "Добавить",
     permitEditing: false,
     newPermitActionPath: {
       // store path by default
@@ -22,6 +37,10 @@ export default {
       dateStart: null,
       dateEnd: null,
     },
+    page: 1,
+    pages: 1,
+    rowsRoDisplay: 16,
+    printBag: [],
   },
 
   mutations: {
@@ -33,21 +52,40 @@ export default {
       if (pattern.test(payload.value)) {
         if (!/^\s+/.test(payload.value)) {
           state.newPermit[payload.field] = payload.value;
-          console.log(payload.value);
         }
-        // console.log('field: ' + payload.field + '; value: ' + payload.value);
       } else {
-        state.newPermit[payload.field] = '';
+        state.newPermit[payload.field] = "";
       }
 
-      if(state.newPermit.surname || state.newPermit.forename || state.newPermit.patronymic || state.newPermit.position || state.newPermit.company) {
-        this.commit("permit/filterPermits");
-      }
+      this.commit("permit/filterPermits");
+    },
 
-      if(!state.newPermit.surname && !state.newPermit.forename && !state.newPermit.patronymic && !state.newPermit.position && !state.newPermit.company) {
-        this.commit("permit/populatePermits");
-      }
+    setTypedText(state, payload) {
+      state.typedText[payload.field] = payload.value;
+    },
 
+    resetTypedText(state, payload) {
+      state.typedText = {
+        surname: null,
+        forename: null,
+        patronymic: null,
+        position: null,
+        company: null,
+      };
+    },
+
+    resetAllInputSuggestions(state, payload) {
+      state.inputSuggestions = {
+        surname: [],
+        forename: [],
+        patronymic: [],
+        position: [],
+        company: [],
+      };
+    },
+
+    setPage(state, payload) {
+      state.page = payload;
     },
 
     filterPermits(state, payload) {
@@ -64,37 +102,22 @@ export default {
             patronymic: state.newPermit.patronymic,
             position: state.newPermit.position,
             company: state.newPermit.company,
-          }
+          },
+          page: state.page,
+          rows: state.rowsRoDisplay,
         }),
       })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        console.log(res);
-        state.storedPermits = res;
-        return res; // res is an array of objects, where each object contain permit data
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    },
-
-    fillInNewPermit(state, payload) {
-      // temporary method for development cases
-      state.newPermit = {
-        id: null,
-        number: null,
-        surname: "Иванов",
-        forename: "Иван",
-        patronymic: "Иванович",
-        company: "ООО Рога и Копыта",
-        position: "Ведущий специалист",
-        dateStart: "2021-12-22 00:00:00",
-        dateEnd: "2021-12-31 23:59:59",
-      };
-      this.commit("permit/setNextPermitNumber", 2022);
+        .then((response) => {
+          return response.json();
+        })
+        .then((res) => {
+          state.storedPermits = res.filteredPermits;
+          state.pages = Math.ceil(+res.totalRows / state.rowsRoDisplay);
+          return res; // res is an array of objects, where each object contain permit data
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
     setNewPermit(state, payload) {
@@ -116,7 +139,7 @@ export default {
       state.newPermitActionPath.method = "PUT";
 
       this.commit("permit/setNewPermit", payload);
-      state.cardTitle = 'Отредактировать';
+      state.cardTitle = "Отредактировать";
       state.permitEditing = true;
     },
 
@@ -125,7 +148,7 @@ export default {
       this.commit("permit/setNextPermitNumber");
       state.newPermit.dateStart = null;
       state.newPermit.dateEnd = null;
-      state.cardTitle = 'Добавить';
+      state.cardTitle = "Добавить";
       state.permitEditing = false;
     },
 
@@ -143,7 +166,7 @@ export default {
         dateStart: null,
         dateEnd: null,
       };
-      state.cardTitle = 'Добавить';
+      state.cardTitle = "Добавить";
       state.permitEditing = false;
     },
 
@@ -153,9 +176,6 @@ export default {
       if (payload) {
         currentYear = payload;
       }
-
-      // console.log(currentYear);
-      // currentYear = 2019;
 
       const res = fetch(`api/permits/last/${currentYear}`, {
         method: "GET",
@@ -176,26 +196,6 @@ export default {
         });
     },
 
-    populatePermits(state, payload) {
-      const res = fetch(`api/permits`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((res) => {
-          state.storedPermits = res;
-          return res; // res is an array of objects, where each object contain permit data
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
     expirePermit(state, payload) {
       const res = fetch(`api/permits/expire/${payload}`, {
         method: "DELETE",
@@ -208,7 +208,7 @@ export default {
           return response.json();
         })
         .then((res) => {
-          this.commit("permit/populatePermits");
+          this.commit("permit/filterPermits");
           this.commit("permit/resetNewPermit");
           this.commit("permit/setNextPermitNumber");
           return res; // res is an array of objects, where each object contain permit data
@@ -230,7 +230,7 @@ export default {
           return response.json();
         })
         .then((res) => {
-          this.commit("permit/populatePermits");
+          this.commit("permit/filterPermits");
           this.commit("permit/resetNewPermit");
           this.commit("permit/setNextPermitNumber");
           return res; // res is an array of objects, where each object contain permit data
@@ -238,6 +238,10 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+
+    deselectAllPermitsToPrint(state, payload) {
+      state.printBag = [];
     },
   },
 };

@@ -64,8 +64,6 @@
       </div>
 
       <div class="card__footer">
-        <!-- <button type="button" class="card__button card__button_temporary" @click.prevent="getPermits"><span class="material-icons-outlined md-18">file_download</span> Получить</button> -->
-        <!-- <button type="button" class="card__button card__button_temporary" @click.prevent="fillInNewPermit"><span class="material-icons-outlined md-18">format_color_fill</span> Заполнить</button> -->
         <button type="reset" class="card__button card__button_reset-form" @click.prevent="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
         <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
       </div>
@@ -100,23 +98,26 @@ export default {
 
   methods: {
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
-    ...mapMutations('permit', ['fillInNewPermit']), // get dummy data
     ...mapMutations('permit', ['setNextPermitNumber']),
-    ...mapMutations('permit', ['populatePermits']),
+    ...mapMutations('permit', ['filterPermits']),
     ...mapMutations('permit', ['resetNewPermit']),
-
-    getFilteredPermits(inputField) {
-      console.log(`getFilteredPermits.... ${inputField}`);
-    },
+    ...mapMutations('permit', ['setPage']),
+    ...mapMutations('permit', ['deselectAllPermitsToPrint']),
+    ...mapMutations('permit', ['resetTypedText']),
+    ...mapMutations('permit', ['resetAllInputSuggestions']),
 
     clearInput(inputField) {
       this.newPermit[inputField] = null;
     },
 
     resetForm() {
+      this.setPage(1);
       this.resetNewPermit();
       this.setNextPermitNumber();
-      this.populatePermits();
+      this.filterPermits();
+      this.deselectAllPermitsToPrint();
+      this.resetTypedText();
+      this.resetAllInputSuggestions();
     },
 
     savePermit() {
@@ -156,18 +157,12 @@ export default {
           return;
         }
 
-        // this.populatePermits();
         this.resetForm();
         return res;
       })
       .catch((err) => {
         console.log(err);
       });
-      // console.log('saved...');
-    },
-
-    getPermits() { // temporary method for development cases
-      console.log(this.$store.state.permit.storedPermits);
     },
 
     formatDate(permitDate) {
@@ -212,7 +207,7 @@ export default {
 
   created() {
     this.setNextPermitNumber();
-    this.populatePermits(); // get all already stored permits
+    this.filterPermits(); // get all already stored permits
   }
 };
 </script>

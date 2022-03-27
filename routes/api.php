@@ -24,7 +24,6 @@ use App\Http\Controllers\PersonController;
 
 
 
-Route::get('permits', [ PermitController::class, 'index' ]); // get all permits
 Route::get('permits/last/{year}', [ PermitController::class, 'last' ]); // get last permit number
 Route::get('permits/{id}', [ PermitController::class, 'show' ]); // get one permit by id
 Route::post('permits', [ PermitController::class, 'store' ]); // store one permit

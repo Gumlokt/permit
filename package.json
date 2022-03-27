@@ -19,6 +19,7 @@
         "vue": "^3.2.31",
         "vue-router": "^4.0.14",
         "vue3-date-time-picker": "^2.8.2",
+        "vuejs-paginate-next": "^1.0.2",
         "vuex": "^4.0.2"
     }
 }

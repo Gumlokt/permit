@@ -38,9 +38,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      typedText: null,
       focus: false,
-      inputSuggestions: [],
       openSuggestionsList: false,
       highlightIndex: 0
     }
@@ -60,13 +58,14 @@ export default {
 
 
   methods: {
-    ...mapMutations('permit', ['deletePermit']),
+    ...mapMutations('permit', ['setTypedText']),
     ...mapMutations('permit', ['updateNewPermit']),
-    ...mapMutations('permit', ['populatePermits']),
+    ...mapMutations('permit', ['setPage']),
+    ...mapMutations('permit', ['deselectAllPermitsToPrint']),
 
     setFocus() {
       this.focus = true;
-      this.currentText = this.typedText;
+      this.currentText = this.typedText[this.field];
       this.currentSuggestions.length ? this.openSuggestionsList = true : this.openSuggestionsList = false;
     },
 
@@ -76,6 +75,8 @@ export default {
     },
 
     getSuggestions() {
+      this.deselectAllPermitsToPrint();
+
       if (/\S+/.test(this.currentText)) {
         const res = fetch(`api/person/autocomplete`, {
           method: "POST",
@@ -107,8 +108,9 @@ export default {
     },
 
     selectSuggestion(suggestion, index) {
-      this.typedText = this.currentText;
-      this.currentText = suggestion;  
+      this.setPage(1);
+      this.setTypedText({ field: this.field, value: this.currentText });
+      this.currentText = suggestion;
       this.openSuggestionsList = false;
       this.highlightIndex = index;
     },
@@ -146,19 +148,24 @@ export default {
     },
 
     clearInput() {
-      this.typedText = null;
+      this.setPage(1);
+      this.setTypedText({ field: this.field, value: null });
       this.currentText = null;
       this.$refs[this.field].focus();
       this.currentSuggestions = [];
       this.highlightIndex = 0;
       this.openSuggestionsList = false;
+      this.deselectAllPermitsToPrint();
     },
   },
 
 
   computed: {
     ...mapState({
+      typedText: state => state.permit.typedText,
+      inputSuggestions: state => state.permit.inputSuggestions,
       newPermit: state => state.permit.newPermit,
+      page: state => state.permit.page,
     }),
 
     currentText: {
@@ -167,8 +174,8 @@ export default {
     },
 
     currentSuggestions: {
-      get () { return this.inputSuggestions; },
-      set (value) { this.inputSuggestions = value; }
+      get () { return this.inputSuggestions[this.field]; },
+      set (value) { this.inputSuggestions[this.field] = value; }
     },
   }
 };
@@ -197,11 +204,11 @@ export default {
   max-height: 132px;
   overflow-y: scroll;
 }
-  
+
 .suggestion-list_displayed {
   display: block;
 }
-  
+
 .suggestion-list li {
   cursor: pointer;
   scroll-snap-points-y: 20px;

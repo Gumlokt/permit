@@ -45,6 +45,10 @@ class PermitController extends Controller {
   // Return filtered permits
   public function filter(Request $request) {
     $mainPermitFields = $request->input('mainPermitFields');
+    $page = $request->input('page');
+    $rows = $request->input('rows');
+
+    $offset  = ($page - 1) * $rows;
 
     $filteredPermits = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
@@ -88,10 +92,62 @@ class PermitController extends Controller {
           return $query->where('companies.name', '=', $mainPermitFields['company']);
         }
       })
+      ->when($offset, function ($query, $offset) {
+        return $query->skip($offset);
+      })
+      ->when($rows, function ($query, $rows) {
+        return $query->take($rows);
+      })
+
       ->orderByDesc('permits.id')
       ->get();
 
+      $totalRows = DB::table('permits')
+      ->join('companies', 'permits.companies_id', '=', 'companies.id')
+      ->join('people', 'permits.people_id', '=', 'people.id')
+      ->select(
+        'permits.id',
+        'permits.number',
 
+        'people.surname',
+        'people.forename',
+        'people.patronymic',
+        'people.position',
+
+        'companies.name as company',
+
+        'permits.start as dateStart',
+        'permits.end as dateEnd'
+      )
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['surname'])) {
+          return $query->where('surname', '=', $mainPermitFields['surname']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['forename'])) {
+          return $query->where('forename', '=', $mainPermitFields['forename']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['patronymic'])) {
+          return $query->where('patronymic', '=', $mainPermitFields['patronymic']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['position'])) {
+          return $query->where('position', '=', $mainPermitFields['position']);
+        }
+      })
+      ->where(function($query) use ($mainPermitFields) {
+        if (!empty($mainPermitFields['company'])) {
+          return $query->where('companies.name', '=', $mainPermitFields['company']);
+        }
+      })
+      ->count();
+
+
+      return [ 'totalRows' => $totalRows, 'filteredPermits' => $filteredPermits ];;
       return $filteredPermits;
   }
 
