@@ -36,7 +36,11 @@ export default {
 
 <style>
 .header {
+  box-sizing: border-box;
+  margin: 0;
   padding: 10px 0;
+  min-height: 50px;
+
   background-image:
     linear-gradient(178deg, rgb(0, 138, 255), rgba(0, 138, 255, 0) 100%),
     linear-gradient(20deg, rgb(0, 255, 198), rgba(0, 255, 198, 0) 100%),

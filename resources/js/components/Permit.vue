@@ -185,11 +185,9 @@ export default {
     }),
 
     resetButtonIsDisabled() {
-      for (const prop in this.newPermit) {
-        if(this.newPermit[prop]) {
+        if(this.newPermit.surname || this.newPermit.forename || this.newPermit.patronymic || this.newPermit.position || this.newPermit.company || this.newPermit.dateStart || this.newPermit.dateEnd) {
           return false;
         }
-      }
 
       return true;
     },

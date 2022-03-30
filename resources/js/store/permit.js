@@ -32,8 +32,8 @@ export default {
       surname: null,
       forename: null,
       patronymic: null,
-      company: null,
       position: null,
+      company: null,
       dateStart: null,
       dateEnd: null,
     },
@@ -141,6 +141,7 @@ export default {
       this.commit("permit/setNewPermit", payload);
       state.cardTitle = "Отредактировать";
       state.permitEditing = true;
+      this.commit("permit/filterPermits");
     },
 
     copyPermit(state, payload) {
@@ -150,6 +151,7 @@ export default {
       state.newPermit.dateEnd = null;
       state.cardTitle = "Добавить";
       state.permitEditing = false;
+      this.commit("permit/filterPermits");
     },
 
     resetNewPermit(state, payload) {
