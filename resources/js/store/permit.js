@@ -41,6 +41,12 @@ export default {
     pages: 1,
     rowsRoDisplay: 16,
     printBag: [],
+
+    stats: {
+      totalPermitsCount: null,
+      validPermitsCount: null,
+      expiredPermitsCount: null,
+    }
   },
 
   mutations: {
@@ -112,7 +118,11 @@ export default {
         })
         .then((res) => {
           state.storedPermits = res.filteredPermits;
-          state.pages = Math.ceil(+res.totalRows / state.rowsRoDisplay);
+          state.pages = Math.ceil(+res.totalPermitsCount / state.rowsRoDisplay);
+
+          state.stats.totalPermitsCount = +res.totalPermitsCount;
+          state.stats.expiredPermitsCount = +res.expiredPermitsCount;
+          state.stats.validPermitsCount = state.stats.totalPermitsCount - state.stats.expiredPermitsCount;
           return res; // res is an array of objects, where each object contain permit data
         })
         .catch((err) => {

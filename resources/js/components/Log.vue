@@ -14,6 +14,12 @@
         </button>
       </form>
 
+      <ul class="stats__items">
+        <li class="stats__item">Пропусков: <strong>{{ stats.totalPermitsCount }}</strong></li>
+        <li class="stats__item stats__item_small">[ действующих: <span style="color: green;">{{ stats.validPermitsCount }};</span></li>
+        <li class="stats__item stats__item_small">истёкших: <span style="color: red;">{{ stats.expiredPermitsCount }}</span> ]</li>
+      </ul>
+      
       <Paginate
         v-model="currentPage"
 
@@ -157,6 +163,7 @@ export default {
       page: state => state.permit.page,
       pages: state => state.permit.pages,
       printBag: state => state.permit.printBag,
+      stats: state => state.permit.stats,
     }),
 
     currentPage: {
@@ -193,9 +200,13 @@ export default {
   width: 100%;
   max-width: 1280px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content max-content minmax(200px, 5fr);
+  grid-template-rows: 1fr;
+  grid-gap: 20px;
+  align-items: center;
   justify-content: space-between;
-  align-items: baseline;
+  align-content: space-between;
 }
 
 .log__form {
@@ -403,7 +414,31 @@ export default {
   padding: 0;
 }
 
+.stats__items {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 
+  color: slategray;
+
+  display: flex;
+}
+
+.stats__item {
+  box-sizing: border-box;
+  margin: 0 8px 0;
+  padding: 0;
+  list-style: none;
+
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 300;
+}
+
+.stats__item_small {
+  font-size: 15px;
+  font-style: italic;
+}
 
 /* Pagination (based on Bootstrap v5.1.3) */
 .pagination {
@@ -413,6 +448,7 @@ export default {
   list-style: none;
 
   display: flex;
+  justify-content: flex-end;
 }
 
 .page-link {
@@ -424,7 +460,7 @@ export default {
   border: 1px solid #dee2e6;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.2;
   font-weight: 300;
 }

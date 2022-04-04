@@ -102,7 +102,7 @@ class PermitController extends Controller {
       ->orderByDesc('permits.id')
       ->get();
 
-      $totalRows = DB::table('permits')
+      $allPermits = DB::table('permits')
       ->join('companies', 'permits.companies_id', '=', 'companies.id')
       ->join('people', 'permits.people_id', '=', 'people.id')
       ->select(
@@ -144,11 +144,18 @@ class PermitController extends Controller {
           return $query->where('companies.name', '=', $mainPermitFields['company']);
         }
       })
-      ->count();
+      ->get();
 
+      $currentDate = date('Y-m-d') . ' 00:00:00';
+      $expiredPermitsCount = 0;
 
-      return [ 'totalRows' => $totalRows, 'filteredPermits' => $filteredPermits ];;
-      return $filteredPermits;
+      foreach ($allPermits as $permit) {
+        if($permit->dateEnd < $currentDate) {
+          $expiredPermitsCount++;
+        }
+      }
+
+      return [ 'totalPermitsCount' => count($allPermits), 'expiredPermitsCount' => $expiredPermitsCount, 'filteredPermits' => $filteredPermits ];;
   }
 
 
