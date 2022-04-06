@@ -19,7 +19,7 @@ class CreatePermitsTable extends Migration
             $table->integer('people_id')->unsigned()->index();
             $table->integer('companies_id')->unsigned()->index();
 
-            $table->string('number')->index();
+            $table->integer('number')->index();
 
             $table->timestamp('start')->nullable();
             $table->timestamp('end')->nullable();

@@ -27,11 +27,10 @@ export default {
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
 
     showContact() {
-      console.log('testtttt');
       this.setPopupMessage({
         header: 'Контактная информация',
-        problem: 'Разработчик: Какупшев Игорь Владимирович',
-        solution: 'Телефон: +7 (34936) 4-93-14' });
+        title: 'Разработчик: Какупшев Игорь Владимирович',
+        content: 'Телефон: +7 (34936) 4-93-14' });
       this.openPopup();
     },
   },

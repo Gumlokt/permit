@@ -7,19 +7,10 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Permit</title>
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-  <link href="{{ asset('vendor/fonts/Roboto/roboto.css') }}" rel="stylesheet" type="text/css">
+  <link href="{{ asset('vendor/google/fonts/MaterialIcons/MaterialIcons.css') }}" rel="stylesheet">
+  <link href="{{ asset('vendor/google/fonts/Roboto/roboto.css') }}" rel="stylesheet" type="text/css">
   <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css">
 
-  <!-- <style>
-    .app {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      background-color: #333;
-      border: 1px solid #f00;
-    }
-  </style> -->
 </head>
 <body>
   <div id="app"></div>

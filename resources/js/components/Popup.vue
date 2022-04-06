@@ -6,17 +6,25 @@
       <div class="popup__header">
         <h4 class="popup__header_title">
           <span class="material-icons-outlined">chat_bubble_outline</span>
-          {{ headerTitle }}
+          {{ popupMessage.header }}
         </h4>
       </div>
 
       <div class="popup__body">
-        <p class="popup__message popup__message_problem">{{ popupMessage.problem }}</p>
-        <p class="popup__message popup__message_solution">{{ popupMessage.solution }}</p>
+        <p class="popup__message popup__message_title">{{ popupMessage.title }}</p>
+        <p class="popup__message popup__message_content">{{ popupMessage.content }}</p>
       </div>
 
       <div class="popup__footer">
-        <button class="popup__btn-ok" @click="closePopup">Закрыть</button>
+        <button class="popup__btn-ok" :class="[ popupMessage.deleteAction ? 'popup__btn-ok_destroy' : 'popup__btn-ok_delete' ]" v-if="popupMessage.permitId" @click="handlePermitDeletion">
+          <span class="material-icons-outlined md-18" v-if="popupMessage.deleteAction">delete_forever</span>
+          <span class="material-icons-outlined md-18" v-if="!popupMessage.deleteAction">delete</span>
+          &nbsp;Да
+          </button>
+        <button class="popup__btn-ok" @click="closePopup">
+          <span class="material-icons-outlined md-18">{{ popupMessage.permitId ? 'undo' : 'close'}}</span>
+          &nbsp;{{ popupMessage.permitId ? 'Отменить' : 'Закрыть'}}
+        </button>
       </div>
     </div>
   </div>
@@ -35,6 +43,17 @@ export default {
 
   methods: {
     ...mapMutations('popup', ['closePopup']),
+    ...mapMutations('permit', ['deletePermit', 'expirePermit']),
+
+    handlePermitDeletion() {
+      if(this.popupMessage.deleteAction) {
+        this.deletePermit(this.popupMessage.permitId);
+      } else {
+        this.expirePermit(this.popupMessage.permitId);
+      }
+
+      this.closePopup();
+    }
   },
 
   computed: {
@@ -143,11 +162,11 @@ export default {
   font-weight: 300;
 }
 
-.popup__message_problem {
+.popup__message_title {
   color: #da251d;
 }
 
-.popup__message_solution {
+.popup__message_content {
   color: darkslategray;
 }
 
@@ -168,7 +187,8 @@ export default {
 }
 
 .popup__btn-ok {
-  padding: 10px 20px;
+  box-sizing: border-box;
+  padding: 10px;
   border-radius: 5px;
   background: transparent;
   border: 1px solid slategray;
@@ -185,5 +205,25 @@ export default {
   background: slategray;
   color: #fff;
   cursor: pointer;
+}
+
+.popup__btn-ok_destroy {
+  margin-right: 20px;
+  color: #da251d;
+  border: 1px solid #da251d;
+}
+
+.popup__btn-ok_destroy:hover {
+  background: #da251d;
+}
+
+.popup__btn-ok_delete {
+  margin-right: 20px;
+  color: rgb(253, 114, 0);
+  border: 1px solid rgb(253, 114, 0);
+}
+
+.popup__btn-ok_delete:hover {
+  background: rgb(253, 114, 0);
 }
 </style>

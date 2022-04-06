@@ -30,26 +30,48 @@ export default {
   },
 
   methods: {
-    ...mapMutations('permit', ['deletePermit']),
-    ...mapMutations('permit', ['expirePermit']),
-    ...mapMutations('permit', ['editPermit']),
-    ...mapMutations('permit', ['copyPermit']),
-    ...mapMutations('popup', ['openPopup']),
+    ...mapMutations('permit', ['deletePermit', 'expirePermit', 'editPermit', 'copyPermit']),
+    ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
 
     onPermitDelete() {
-      this.openPopup;
+      this.setPopupMessage({
+        header: 'Удаление пропуска',
+        title: `Внимание! Данная операция необратима!`,
+        content: `Вы дейстительно желаете безвозвратно удалить пропуск № ${this.permit.number} из базы данных без возможности последующего его восстановления?`,
+        permitId: this.permit.id,
+        deleteAction: true // 'true' - to delete permit; 'false' - to do permit as expired
+      });
+      this.openPopup();
 
-      if (confirm(`Вы дейстительно желаете безвозвратно удалить пропуск № ${this.permit.number} из базы данных без возможности последующего его восстановления?`)) {
-        this.deletePermit(this.permit.id);
-      }
+      // if (confirm(`Вы дейстительно желаете безвозвратно удалить пропуск № ${this.permit.number} из базы данных без возможности последующего его восстановления?`)) {
+      //   this.deletePermit(this.permit.id);
+      // }
     },
 
     onPermitExpire() {
-      if (confirm(`Вы дейстительно желаете сделать истёкшим срок действия пропуска № ${this.permit.number}?`)) {
-        this.expirePermit(this.permit.id);
-      }
+      this.setPopupMessage({
+        header: 'Сделать пропуск недействительным',
+        title: `Внимание! Этот пропуск больше нельзя будет сделать действующим!`,
+        content: `Вы дейстительно желаете сделать истёкшим срок действия пропуска № ${this.permit.number}?`,
+        permitId: this.permit.id,
+        deleteAction: false // 'true' - to delete permit; 'false' - to do permit as expired
+      });
+      this.openPopup();
+
+      // if (confirm(`Вы дейстительно желаете сделать истёкшим срок действия пропуска № ${this.permit.number}?`)) {
+      //   this.expirePermit(this.permit.id);
+      // }
     }
-  }
+  },
+
+  // computed: {
+  //   ...mapState({
+  //     popupOpened: state => state.popup.popupOpened,
+  //     popupOpened: state => state.popup.popupOpened,
+  //   }),
+
+  // },
+
 };
 </script>
 

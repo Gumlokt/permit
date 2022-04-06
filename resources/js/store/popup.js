@@ -4,8 +4,11 @@ export default {
   state: {
     popupOpened: false,
     popupMessage: {
-      problem: null,
-      solution: null,
+      header: null,
+      title: null,
+      content: null,
+      permitId: null,
+      deleteAction: null, // 'true' - to delete permit; 'false' - to do permit as expired
     },
   },
 
@@ -20,13 +23,19 @@ export default {
     },
 
     setPopupMessage(state, payload) {
-      state.popupMessage.problem = payload.problem;
-      state.popupMessage.solution = payload.solution;
+      state.popupMessage.header = payload.header;
+      state.popupMessage.title = payload.title;
+      state.popupMessage.content = payload.content;
+      state.popupMessage.permitId = payload.permitId;
+      state.popupMessage.deleteAction = payload.deleteAction; // 'true' - to delete permit; 'false' - to do permit as expired
     },
 
     resetPopupMessage(state, payload) {
-      state.popupMessage.problem = null;
-      state.popupMessage.solution = null;
+      state.popupMessage.header = null;
+      state.popupMessage.title = null;
+      state.popupMessage.content = null;
+      state.popupMessage.permitId = null;
+      state.popupMessage.deleteAction = null;
     },
   },
 };

@@ -64,8 +64,8 @@
       </div>
 
       <div class="card__footer">
-        <button type="reset" class="card__button card__button_reset-form" @click.prevent="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span> Очистить</button>
-        <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span> Сохранить</button>
+        <button type="reset" class="card__button card__button_reset-form" @click.prevent="resetForm" :disabled='resetButtonIsDisabled'><span class="material-icons-outlined md-18">clear</span>&nbsp;Очистить</button>
+        <button type="submit" class="card__button card__button_save" @click.prevent="savePermit" :disabled='saveButtonIsDisabled'><span class="material-icons-outlined md-18">save</span>&nbsp;Сохранить</button>
       </div>
 
     </form>
@@ -152,7 +152,11 @@ export default {
         }
 
         if(res.errors) {
-          this.setPopupMessage({ problem: `Похоже, что водимымые данные содержат неизвестную ошибку. [ ${res.message} ]`, solution: 'Попробуйте исправить вводимые данные. Если после этого ошибка не исчезнет, обратитесь  за помощью к разработчику приложения.' });
+          this.setPopupMessage({
+            header: 'Ошибка',
+            title: `Похоже, что водимымые данные содержат неизвестную ошибку. [ ${res.message} ]`,
+            content: 'Попробуйте исправить вводимые данные. Если после этого ошибка не исчезнет, обратитесь  за помощью к разработчику приложения.'
+          });
           this.openPopup();
           return;
         }

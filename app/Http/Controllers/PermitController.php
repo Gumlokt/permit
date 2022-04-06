@@ -312,6 +312,11 @@ class PermitController extends Controller {
   public function expire(Request $request, $id) {
     $permit = Permit::findOrFail($id);
     $yesterday = date('Y-m-d', time() - 86400) . ' 23:59:59'; // 86 400 sec = 60 sec * 60 min * 24 hour
+
+    if($permit->start >= $yesterday) {
+      $permit->update(['start' => date('Y-m-d', time() - 86400) . ' 00:00:00']);
+    }
+
     $permit->update(['end' => $yesterday]);
 
     return $permit;
@@ -376,8 +381,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Задана дата начала действия вновь вводимого пропуска позднее даты окончания действия.',
-          'solution' => 'Задайте корретный срок действия вновь вводимого пропуска.',
+          'header' => 'Ошибка',
+          'title' => 'Задана дата начала действия вновь вводимого пропуска позднее даты окончания действия.',
+          'content' => 'Задайте корретный срок действия вновь вводимого пропуска.',
         ]
       ];
     }
@@ -389,8 +395,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Запрещён ввод заведомо истёкших пропусков.',
-          'solution' => 'Исправьте дату окончания действия вновь вводимого пропуска на текущую либо более позднюю.',
+          'header' => 'Ошибка',
+          'title' => 'Запрещён ввод заведомо истёкших пропусков.',
+          'content' => 'Исправьте дату окончания действия вновь вводимого пропуска на текущую либо более позднюю.',
         ]
       ];
     }
@@ -401,8 +408,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Запрещён ввод пропусков, срок действия которых начинается в одном году, а заканчивается следующем.',
-          'solution' => 'Исправьте срок действия вновь вводимого пропуска так, чтобы год начала действия и год окончания действия были одинаковыми.',
+          'header' => 'Ошибка',
+          'title' => 'Запрещён ввод пропусков, срок действия которых начинается в одном году, а заканчивается следующем.',
+          'content' => 'Исправьте срок действия вновь вводимого пропуска так, чтобы год начала действия и год окончания действия были одинаковыми.',
         ]
       ];
     }
@@ -413,8 +421,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Запрещён ввод пропусков далёкого будущего, т.е. пропусков, у которых срок действия выходит за рамки текущего либо следующего годов.',
-          'solution' => 'Исправьте год действия вновь вводимого пропуска на текущий либо следующий.',
+          'header' => 'Ошибка',
+          'title' => 'Запрещён ввод пропусков далёкого будущего, т.е. пропусков, у которых срок действия выходит за рамки текущего либо следующего годов.',
+          'content' => 'Исправьте год действия вновь вводимого пропуска на текущий либо следующий.',
         ]
       ];
     }
@@ -442,8 +451,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Защита от создания дубликатов! В базе данных уже зарегистрированы 2 пропуска с такими же значениями и ещё не истёкшими сроками действия.',
-          'solution' => 'Проверьте правильность ввода данных, вероятно, вы собирались оформить пропуск на другое лицо или организацию.',
+          'header' => 'Ошибка',
+          'title' => 'Защита от создания дубликатов! В базе данных уже зарегистрированы 2 пропуска с такими же значениями и ещё не истёкшими сроками действия.',
+          'content' => 'Проверьте правильность ввода данных, вероятно, вы собирались оформить пропуск на другое лицо или организацию.',
         ]
       ];
     }
@@ -486,8 +496,9 @@ class PermitController extends Controller {
         'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
         'answer' => [
           'error' => true,
-          'problem' => 'Защита от создания дубликатов! В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' на указанное лицо и организацию, у которого дата начала дейстия ещё не наступила.',
-          'solution' => 'Вместо создания ещё одного пропуска, отредактируйте срок действия зарегистрированного ранее и ещё не вступившего в действие пропуска № ' . $duplicatePermit->number . ', задав ему нужный вам период.',
+          'header' => 'Ошибка',
+          'title' => 'Защита от создания дубликатов! В базе данных уже зарегистрирован пропуск № ' . $duplicatePermit->number . ' на указанное лицо и организацию, у которого дата начала дейстия ещё не наступила.',
+          'content' => 'Вместо создания ещё одного пропуска, отредактируйте срок действия зарегистрированного ранее и ещё не вступившего в действие пропуска № ' . $duplicatePermit->number . ', задав ему нужный вам период.',
         ]
       ];
 
@@ -501,8 +512,9 @@ class PermitController extends Controller {
             'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
             'answer' => [
               'error' => true,
-              'problem' => 'Произошло пересечение сроков действия редактируемого пропуска с пропуском № ' . $duplicatePermit->number . ', содержащего такие же значения, но с другим сроком дейстия, который начнётся с ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
-              'solution' => 'Задайте период действия пропуска так, чтобы он не пересекался с периодом действия пропуска № ' . $duplicatePermit->number . '.',
+              'header' => 'Ошибка',
+              'title' => 'Произошло пересечение сроков действия редактируемого пропуска с пропуском № ' . $duplicatePermit->number . ', содержащего такие же значения, но с другим сроком дейстия, который начнётся с ' . date_format(date_create_from_format('Y-m-d H:i:s', $duplicatePermit->dateStart), 'd.m.Y') . '.',
+              'content' => 'Задайте период действия пропуска так, чтобы он не пересекался с периодом действия пропуска № ' . $duplicatePermit->number . '.',
             ]
           ];
         }
@@ -512,8 +524,9 @@ class PermitController extends Controller {
             'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
             'answer' => [
               'error' => true,
-              'problem' => 'Ошибка хронологии! Для пропуска с более старшим номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать более ранний срок действия, в то время как, в базе есть ранее зарегистрированный пропуск № ' . $duplicatePermit->number . ', у которого срок действия ещё не начался.',
-              'solution' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
+              'header' => 'Ошибка',
+              'title' => 'Ошибка хронологии! Для пропуска с более старшим номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать более ранний срок действия, в то время как, в базе есть ранее зарегистрированный пропуск № ' . $duplicatePermit->number . ', у которого срок действия ещё не начался.',
+              'content' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
             ]
           ];
         }
@@ -563,8 +576,9 @@ class PermitController extends Controller {
           'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
           'answer' => [
             'error' => true,
-            'problem' => 'Ошибка! Произошло пересечение сроков действия с пропуском № ' . $duplicatePermit->number . ', у которого такие же значения, но дата окончания дейстия позже либо равна дате начала действия вводимого (либо редактируемого) пропуска.',
-            'solution' => 'Для пропусков с одинаковыми значениями задавайте сроки действия так, чтобы они не пересеклись. Вариант №1. Отредактируйте срок действия так, чтобы он не пересекался со сроком пропуска № ' . $duplicatePermit->number . '. Вариант №2. Сначала переведите пропуск № ' . $duplicatePermit->number . ' в число истёкших и затем повторите попытку добавления/редактирования вновь.',
+            'header' => 'Ошибка',
+            'title' => 'Ошибка! Произошло пересечение сроков действия с пропуском № ' . $duplicatePermit->number . ', у которого такие же значения, но дата окончания дейстия позже либо равна дате начала действия вводимого (либо редактируемого) пропуска.',
+            'content' => 'Для пропусков с одинаковыми значениями задавайте сроки действия так, чтобы они не пересеклись. Вариант №1. Отредактируйте срок действия так, чтобы он не пересекался со сроком пропуска № ' . $duplicatePermit->number . '. Вариант №2. Сначала переведите пропуск № ' . $duplicatePermit->number . ' в число истёкших и затем повторите попытку добавления/редактирования вновь.',
           ]
         ];
       }
@@ -575,8 +589,9 @@ class PermitController extends Controller {
           'statusCode' => 409, // 409 CONFLICT - HTTP Status code which means that the request could not be completed due to a conflict with the current state of the target resource
           'answer' => [
             'error' => true,
-            'problem' => 'Ошибка хронологии! Для пропуска с более ранним номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать срок действия, который более поздний, чем у ранее зарегистрированного пропуска № ' . $duplicatePermit->number . ', срок действия которого ещё не истёк.',
-            'solution' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
+            'header' => 'Ошибка',
+            'title' => 'Ошибка хронологии! Для пропуска с более ранним номером (а именно для пропуска №' . $clearedInputs['number'] . '), вы пытаетесь задать срок действия, который более поздний, чем у ранее зарегистрированного пропуска № ' . $duplicatePermit->number . ', срок действия которого ещё не истёк.',
+            'content' => 'При вводе пропусков с одинаковыми значениями, но разными сроками действия следите за тем, чтобы у пропусков с более младшим номером был более ранний срок действия, а у пропусков с более старшим номером был более поздний срок действия.',
           ]
         ];
       }
