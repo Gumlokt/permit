@@ -6,7 +6,7 @@
       <div class="popup__header">
         <h4 class="popup__header_title">
           <span class="material-icons-outlined">chat_bubble_outline</span>
-          {{ popupMessage.header }}
+          &nbsp;{{ popupMessage.header }}
         </h4>
       </div>
 

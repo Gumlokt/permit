@@ -41,9 +41,9 @@
 
     <table class="log__table">
       <tr class="log__trh">
+        <th class="log__th">№</th>
         <th class="log__th">
           <div class="log__th_print">
-            <p class="log__th_title">№</p>
             <button type="button" class="log__print-btn log__print-btn_one log__print-btn_success" @click="selectAllPermitsToPrint()">
               <span class="material-icons-outlined">print</span>
             </button>
@@ -63,10 +63,9 @@
       </tr>
 
       <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printBag.indexOf(permit.id) !== -1 }">
+        <td class="log__td">{{ permit.number }}</td>
         <td class="log__td">
           <div class="log__td_container">
-            {{ permit.number }}
-            &emsp;
             <button type="button" class="log__print-btn log__print-btn_one" @click="togglePermitToPrint(permit)" :class="{ 'log__print-btn_success': printBag.indexOf(permit.id) !== -1 }">
               <span class="material-icons-outlined">print</span>
             </button>

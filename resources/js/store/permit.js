@@ -145,6 +145,7 @@ export default {
     },
 
     editPermit(state, payload) {
+      state.page = 1;
       state.newPermitActionPath.path = `api/permits/${payload.id}`;
       state.newPermitActionPath.method = "PUT";
 
@@ -155,6 +156,7 @@ export default {
     },
 
     copyPermit(state, payload) {
+      state.page = 1;
       this.commit("permit/setNewPermit", payload);
       this.commit("permit/setNextPermitNumber");
       state.newPermit.dateStart = null;

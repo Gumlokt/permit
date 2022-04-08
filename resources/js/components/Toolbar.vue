@@ -5,7 +5,6 @@
     <button type="button" class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)" v-bind:disabled="disabled" title="Отредактировать пропуск"><span class="material-icons-outlined md-24">edit</span></button>
     <button type="button" class="toolbar__btn toolbar__btn-copy" @click="copyPermit(permit)" title="Создать новый пропуск на основе текущего"><span class="material-icons-outlined md-24">content_copy</span></button>
   </div>
-  <!-- <Popup /> -->
 </template>
 
 <script>
@@ -30,7 +29,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('permit', ['deletePermit', 'expirePermit', 'editPermit', 'copyPermit']),
+    ...mapMutations('permit', ['editPermit', 'copyPermit']),
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
 
     onPermitDelete() {
@@ -42,10 +41,6 @@ export default {
         deleteAction: true // 'true' - to delete permit; 'false' - to do permit as expired
       });
       this.openPopup();
-
-      // if (confirm(`Вы дейстительно желаете безвозвратно удалить пропуск № ${this.permit.number} из базы данных без возможности последующего его восстановления?`)) {
-      //   this.deletePermit(this.permit.id);
-      // }
     },
 
     onPermitExpire() {
@@ -57,21 +52,8 @@ export default {
         deleteAction: false // 'true' - to delete permit; 'false' - to do permit as expired
       });
       this.openPopup();
-
-      // if (confirm(`Вы дейстительно желаете сделать истёкшим срок действия пропуска № ${this.permit.number}?`)) {
-      //   this.expirePermit(this.permit.id);
-      // }
     }
   },
-
-  // computed: {
-  //   ...mapState({
-  //     popupOpened: state => state.popup.popupOpened,
-  //     popupOpened: state => state.popup.popupOpened,
-  //   }),
-
-  // },
-
 };
 </script>
 
