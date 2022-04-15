@@ -28,7 +28,7 @@ body {
   grid-auto-flow: column;
   justify-content: start;
   align-content: start;
-  direction: rtl;
+  /* direction: rtl; */
 }
 
 @media print {
