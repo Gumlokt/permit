@@ -66,7 +66,7 @@ body {
 /* каждый 4-й элемент, начиная с 5-го */
 .permit:nth-of-type(4n + 5) {
   border-top: 1px dotted slategray;
-  border-left: 1px dotted slategray;
+  border-right: 1px dotted slategray;
   border-bottom: 1px dotted slategray;
 }
 
@@ -74,7 +74,7 @@ body {
 .permit:nth-of-type(n + 6):nth-of-type(-n + 8),
 .permit:nth-of-type(n + 10):nth-of-type(-n + 12),
 .permit:nth-of-type(n + 14):nth-of-type(-n + 16) {
-  border-left: 1px dotted slategray;
+  border-right: 1px dotted slategray;
   border-bottom: 1px dotted slategray;
 }
 
