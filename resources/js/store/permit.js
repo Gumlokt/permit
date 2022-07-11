@@ -20,8 +20,7 @@ export default {
     cardTitle: "Добавить",
     permitEditing: false,
     newPermitActionPath: {
-      // store path by default
-      path: "api/permits",
+      path: "api/permits", // store path by default
       method: "POST",
     },
     storedPermits: [],
@@ -222,9 +221,9 @@ export default {
           return response.json();
         })
         .then((res) => {
-          this.commit("permit/filterPermits");
           this.commit("permit/resetNewPermit");
           this.commit("permit/setNextPermitNumber");
+          this.commit("permit/filterPermits");
           return res; // res is an array of objects, where each object contain permit data
         })
         .catch((err) => {
@@ -244,9 +243,9 @@ export default {
           return response.json();
         })
         .then((res) => {
-          this.commit("permit/filterPermits");
           this.commit("permit/resetNewPermit");
           this.commit("permit/setNextPermitNumber");
+          this.commit("permit/filterPermits");
           return res; // res is an array of objects, where each object contain permit data
         })
         .catch((err) => {

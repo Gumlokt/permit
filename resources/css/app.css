@@ -1,4 +1,6 @@
 @import url(./normalize.css);
+@import url(./vendor/google/fonts/MaterialIcons/MaterialIcons.css);
+@import url(./vendor/google/fonts/Roboto/roboto.css);
 
 *,
 html,

@@ -8,8 +8,6 @@
   </main>
 
   <Footer />
-
-  <!-- <button @click="openPopup">Open Popup</button> -->
 </template>
 
 <script>
@@ -29,10 +27,6 @@ export default {
     Log,
     Popup,
   },
-
-  // methods: {
-  //   ...mapMutations('popup', ['openPopup']),
-  // },
 
   computed: {
     ...mapState({ popupOpened: state => state.popup.popupOpened }),
@@ -56,10 +50,4 @@ export default {
   margin: 0;
   padding: 0 0 20px;
 }
-
-/* @media screen and (max-width: 1420px) {
-  .main {
-    padding: 0 10px;
-  }
-} */
 </style>

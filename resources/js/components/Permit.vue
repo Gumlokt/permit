@@ -8,7 +8,6 @@
           <div class="card__text-field">
             <label class="card__text-label" v-bind:class="{ 'card__text-label_lifted': newPermit.number }" for="number">№ пропуска</label>
             <input type="text" size="10" name="number" class="card__text-input" v-model="newPermit.number" disabled>
-            <!-- <button class="card__button card__button_reset-input" @click.prevent="clearInput('number')" disabled><span class="material-icons material-icons-outlined">clear</span></button> -->
           </div>
 
           <PersonAutocomplete v-bind:field="'surname'" v-bind:title="'Фамилия'"/>
@@ -74,8 +73,8 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import Datepicker from 'vue3-date-time-picker';
-import 'vue3-date-time-picker/dist/main.css';
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 import PersonAutocomplete from "./PersonAutocomplete";
 
 export default {
@@ -163,6 +162,10 @@ export default {
 
         this.resetForm();
         return res;
+      })
+      .then((res) => {
+        this.newPermit.dateStart = new Date(res.start);
+        this.newPermit.dateEnd = new Date(res.end);
       })
       .catch((err) => {
         console.log(err);

@@ -16,7 +16,7 @@
 
       <ul class="stats__items">
         <li class="stats__item">Пропусков: <strong>{{ stats.totalPermitsCount }}</strong></li>
-        <li class="stats__item stats__item_small">[ действующих: <span style="color: green;">{{ stats.validPermitsCount }};</span></li>
+        <li class="stats__item stats__item_small stats__item_middle">[ действующих: <span style="color: green;">{{ stats.validPermitsCount }};</span></li>
         <li class="stats__item stats__item_small">истёкших: <span style="color: red;">{{ stats.expiredPermitsCount }}</span> ]</li>
       </ul>
       
@@ -177,7 +177,6 @@ export default {
     let token = document.head.querySelector('meta[name="csrf-token"]');
     this.token = token.content;
   }
-
 };
 </script>
 
@@ -192,6 +191,7 @@ export default {
   grid-template-columns: 1fr;
   justify-items: center;
 }
+
 .log__panel {
   box-sizing: border-box;
   margin: 0 auto;
@@ -202,7 +202,7 @@ export default {
   display: grid;
   grid-template-columns: max-content max-content minmax(200px, 5fr);
   grid-template-rows: 1fr;
-  grid-gap: 20px;
+  grid-gap: 15px;
   align-items: center;
   justify-content: space-between;
   align-content: space-between;
@@ -425,7 +425,7 @@ export default {
 
 .stats__item {
   box-sizing: border-box;
-  margin: 0 8px 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 
@@ -437,6 +437,10 @@ export default {
 .stats__item_small {
   font-size: 15px;
   font-style: italic;
+}
+
+.stats__item_middle {
+  margin: 0 5px 0;
 }
 
 /* Pagination (based on Bootstrap v5.1.3) */
@@ -463,11 +467,13 @@ export default {
   line-height: 1.2;
   font-weight: 300;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .page-link {
     transition: none;
   }
 }
+
 .page-link:hover {
   z-index: 2;
   color: #0a58ca;
@@ -475,6 +481,7 @@ export default {
   border-color: #dee2e6;
   cursor: pointer;
 }
+
 .page-link:focus {
   z-index: 3;
   color: #0a58ca;
@@ -486,12 +493,14 @@ export default {
 .page-item:not(:first-child) .page-link {
   margin-left: -1px;
 }
+
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
   background-color: #0d6efd;
   border-color: #0d6efd;
 }
+
 .page-item.disabled .page-link {
   color: #6c757d;
   pointer-events: none;
@@ -511,8 +520,6 @@ export default {
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
 }
-
-
 
 @media screen and (max-width: 1600px) {
   .log__table {

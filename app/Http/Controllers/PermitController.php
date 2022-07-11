@@ -271,21 +271,30 @@ class PermitController extends Controller {
     // разберемся с работниками
     $person = Person::find($permit->people_id); // person, that already stored in DB
     if ($person->surname != $clearedInputs['surname'] or $person->forename != $clearedInputs['forename'] or $person->patronymic != $clearedInputs['patronymic'] or $person->position != $clearedInputs['position']) {
-      $newPerson = Person::where('surname', '=', $clearedInputs['surname']) // person data, that user is typed (in update permit form)
+      $personId = $permit->people_id;
+      $newPerson = Person::where('surname', '=', $clearedInputs['surname']) // check if there is a person in DB, that user has typed (in update permit form)
         ->where('forename', '=', $clearedInputs['forename'])
         ->where('patronymic', '=', $clearedInputs['patronymic'])
         ->where('position', '=', $clearedInputs['position'])
+        ->where(function($query) use ($personId) {
+          if ($personId) {
+            return $query->where('id', '!=', $personId);
+          }
+        })
         ->first();
+        // Log::debug('old person id: ' . $person->id);
+        // Log::debug('new person id: ' . $newPerson->id);
 
-        $countOtherPermits = Permit::where('id', '!=', $id)
-          ->where('people_id', '=', $permit->people_id)
-          ->count();
+      $countOtherPermits = Permit::where('id', '!=', $id)
+        ->where('people_id', '=', $permit->people_id)
+        ->count();
 
       if ($newPerson) {
         $sql['people_id'] = $newPerson->id;
 
         if (!$countOtherPermits) {
           Person::destroy($permit->people_id);
+          // Log::debug('text: ' . $permit->people_id);
         }
       } else {
         if ($countOtherPermits) {
@@ -366,7 +375,7 @@ class PermitController extends Controller {
 
     $anotherPermit = Permit::where('people_id', '=', $deletedPermit->people_id)->first();
     if (!$anotherPermit) {
-      Person::destroy($deletedPermit->companies_id);
+      Person::destroy($deletedPermit->people_id);
     }
   }
 

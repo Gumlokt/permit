@@ -62,7 +62,6 @@ export default {
       popupMessage: state => state.popup.popupMessage,
     }),
   },
-
 };
 </script>
 

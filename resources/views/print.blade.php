@@ -30,7 +30,7 @@
 
                 <li class="permit__item">
                   <h3 class="permit__title">Организация:</h3>
-                  <p class="permit__value">{{ $permit->companies->name }}</p>
+                  <p class="permit__value permit__value_fit">{{ $permit->companies->name }}</p>
                 </li>
 
                 <li class="permit__item">
@@ -45,5 +45,23 @@
       </page>
     @endforeach
 
+    <script>
+      const getFontSize = (textLength) => {
+        const baseSize = 11;
+        if (textLength >= baseSize) {
+          textLength = baseSize - 2;
+          return '.4vw';
+        }
+        const fontSize = baseSize - textLength;
+        return `${fontSize}vw`;
+      }
+
+      const boxes = document.querySelectorAll('.permit__value_fit');
+        
+      boxes.forEach(box => {
+        box.style.fontSize = getFontSize(box.textContent.length);
+        console.log(box.textContent.length);
+      })
+    </script>
   </body>
 </html>
