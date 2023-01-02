@@ -61,6 +61,7 @@ class PermitController extends Controller {
         'people.forename',
         'people.patronymic',
         'people.position',
+        'people.karma',
 
         'companies.name as company',
 
@@ -146,6 +147,7 @@ class PermitController extends Controller {
       })
       ->get();
 
+      $allPermitsCount = count($allPermits);
       $currentDate = date('Y-m-d') . ' 00:00:00';
       $expiredPermitsCount = 0;
 
@@ -155,11 +157,28 @@ class PermitController extends Controller {
         }
       }
 
-      return [ 'totalPermitsCount' => count($allPermits), 'expiredPermitsCount' => $expiredPermitsCount, 'filteredPermits' => $filteredPermits ];;
+      return [ 'totalPermitsCount' => $allPermitsCount, 'expiredPermitsCount' => $expiredPermitsCount, 'filteredPermits' => $filteredPermits ];;
   }
 
 
-  // Return last permit ID
+  // Toggle person's karma
+  public function toggle($id) {
+    $permit = Permit::find($id);
+    $person = Person::find($permit->people_id); // person, that already stored in DB
+
+    // reverse person's karma
+    if((int)$person->karma) {
+      $person->karma = 0;
+    } else {
+      $person->karma = 1;
+    }
+
+    $person->save();
+
+    return $person->karma;
+  }
+
+
   public function last($year) {
     $lastNumber = Permit::where('start', '<=', $year . '-12-31 23:59:59')->max('number');
 

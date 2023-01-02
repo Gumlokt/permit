@@ -17,7 +17,7 @@ class PersonController extends Controller {
   public function autocomplete(Request $request) {
     $field = $request->input('field');
     $term = $request->input('term');
-    
+
     switch ($field) {
       case 'company': $table = 'companies'; $field = 'name'; break;
       default: $table = 'people'; break;

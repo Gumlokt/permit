@@ -45,7 +45,7 @@ export default {
       totalPermitsCount: null,
       validPermitsCount: null,
       expiredPermitsCount: null,
-    }
+    },
   },
 
   mutations: {
@@ -121,7 +121,8 @@ export default {
 
           state.stats.totalPermitsCount = +res.totalPermitsCount;
           state.stats.expiredPermitsCount = +res.expiredPermitsCount;
-          state.stats.validPermitsCount = state.stats.totalPermitsCount - state.stats.expiredPermitsCount;
+          state.stats.validPermitsCount =
+            state.stats.totalPermitsCount - state.stats.expiredPermitsCount;
           return res; // res is an array of objects, where each object contain permit data
         })
         .catch((err) => {
@@ -255,6 +256,26 @@ export default {
 
     deselectAllPermitsToPrint(state, payload) {
       state.printBag = [];
+    },
+
+    markPerson(state, payload) {
+      const res = fetch(`api/permits/karma/${payload.permitId}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((res) => {
+          this.commit("permit/filterPermits");
+          return res; // res is a new person's karma
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };

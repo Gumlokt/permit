@@ -1,5 +1,6 @@
 <template>
   <div class="toolbar">
+    <button type="button" class="toolbar__btn toolbar__btn-mark" @click="onPersonMark" v-bind:disabled="disabled" v-bind:title='permit.karma ? "Добавить в Чёрный список (отметить как недобросовестный)" : "Убрать из Чёрного списка (отметить как добросовестный)"'><span class="material-icons-outlined md-24">{{ permit.karma ? 'thumb_down' : 'thumb_up' }}</span></button>
     <button type="button" class="toolbar__btn toolbar__btn-delete" @click="onPermitDelete" v-bind:disabled="disabled" title="Удалить из базы данных без возможности восстановления"><span class="material-icons-outlined md-24">clear</span></button>
     <button type="button" class="toolbar__btn toolbar__btn-expire" @click="onPermitExpire" v-bind:disabled="disabled" title="Сделать срок действия пропуска истёкшим"><span class="material-icons-outlined md-24">delete</span></button>
     <button type="button" class="toolbar__btn toolbar__btn-edit" @click="editPermit(permit)" v-bind:disabled="disabled" title="Отредактировать пропуск"><span class="material-icons-outlined md-24">edit</span></button>
@@ -29,8 +30,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations('permit', ['editPermit', 'copyPermit']),
+    ...mapMutations('permit', ['editPermit', 'copyPermit', 'markPerson']),
     ...mapMutations('popup', ['openPopup', 'setPopupMessage']),
+
+    onPersonMark() {
+      this.markPerson({
+        permitId: this.permit.id,
+      });
+    },
 
     onPermitDelete() {
       this.setPopupMessage({
@@ -102,6 +109,16 @@ export default {
   background-color: rgba(250, 240, 230, 0.85);
 }
 
+.toolbar__btn-mark {
+  color:#bb8fce;
+  border: 1px solid #bb8fce;
+  margin-right: 5px;
+}
+
+.toolbar__btn-mark:hover {
+  background: #a569bd;
+}
+
 .toolbar__btn-delete {
   color: #da251d;
   border: 1px solid #da251d;
@@ -114,6 +131,7 @@ export default {
 .toolbar__btn-expire {
   color: slategray;
   border: 1px solid slategray;
+  margin-right: 5px;
 }
 
 .toolbar__btn-expire:hover {

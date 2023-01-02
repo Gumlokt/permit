@@ -19,7 +19,7 @@
         <li class="stats__item stats__item_small stats__item_middle">[ действующих: <span style="color: green;">{{ stats.validPermitsCount }};</span></li>
         <li class="stats__item stats__item_small">истёкших: <span style="color: red;">{{ stats.expiredPermitsCount }}</span> ]</li>
       </ul>
-      
+
       <Paginate
         v-model="currentPage"
 
@@ -62,7 +62,7 @@
         <th class="log__th">Действует по</th>
       </tr>
 
-      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printBag.indexOf(permit.id) !== -1 }">
+      <tr class="log__tr" v-for="permit in storedPermits" v-bind:key="permit.id" v-bind:class="{ 'log__tr_upcoming': permit.dateStart > curTime, 'log__tr_expired': curTime > permit.dateEnd, 'log__tr_editing': permit.id == newPermit.id && permitEditing, 'log__tr_printing': printBag.indexOf(permit.id) !== -1, 'log__tr_bad-karma': permit.karma == 0 }">
         <td class="log__td">{{ permit.number }}</td>
         <td class="log__td">
           <div class="log__td_container">
@@ -71,7 +71,14 @@
             </button>
           </div>
         </td>
-        <td class="log__td">{{ permit.surname }}</td>
+        <td class="log__td">
+          <div class="log__td_container">
+            <div class="log__td_text">{{ permit.surname }}</div>
+            <div class="log__td_icon">
+              <span class="material-icons-outlined md-18" v-if="!permit.karma">person_off</span>
+            </div>
+          </div>
+        </td>
         <td class="log__td">{{ permit.forename }}</td>
         <td class="log__td">{{ permit.patronymic }}</td>
         <td class="log__td">{{ permit.position }}</td>
@@ -307,6 +314,16 @@ export default {
   background: #8ed19e;
 }
 
+.log__tr_bad-karma {
+  background: #d5d5d5;
+  background: #ebdef0;
+  color: #000;
+}
+
+.log__tr_bad-karma:hover {
+  background: #d7bde2;
+}
+
 .log__td {
   position: relative;
   padding: 4px 10px;
@@ -321,6 +338,17 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+
+.log__td_text {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.log__td_icon {
+  font-size: 16px;
+  font-weight: 300;
+  margin-left: 10px;
 }
 
 .log__print-btn {

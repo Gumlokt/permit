@@ -12,6 +12,9 @@ body {
   font-weight: 400;
 }
 
+span.md-14 {
+  font-size: 14px;
+}
 span.md-18 {
   font-size: 18px;
 }
