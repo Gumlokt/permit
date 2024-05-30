@@ -30,7 +30,7 @@
 
                 <li class="permit__item">
                   <h3 class="permit__title">Организация:</h3>
-                  <p class="permit__value permit__value_fit">{{ $permit->companies->name }}</p>
+                  <p class="permit__value">{{ $permit->companies->name }}</p>
                 </li>
 
                 <li class="permit__item">
