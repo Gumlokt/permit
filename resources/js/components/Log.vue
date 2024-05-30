@@ -143,7 +143,9 @@ export default {
       if (this.printBag.indexOf(selectedPermit.id) !== -1) {
         this.printBag.splice(this.printBag.indexOf(selectedPermit.id), 1);
       } else {
-        this.printBag.push(selectedPermit.id);
+        if (this.printBag.length < 16) {
+          this.printBag.push(selectedPermit.id);
+        }
       }
     },
 
@@ -157,7 +159,7 @@ export default {
 
     displayNextItems(pageNum) {
       this.filterPermits(); // 1 - first page for pagination
-      this.deselectAllPermitsToPrint();
+      // this.deselectAllPermitsToPrint();
     },
   },
 
